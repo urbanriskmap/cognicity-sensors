@@ -8,9 +8,13 @@
     "dotenv": "^4.0.0",
     "pg-promise": "^6.10.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/babel src -d bin"
   },
   "repository": {
     "type": "git",
