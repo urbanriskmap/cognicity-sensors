@@ -1,0 +1,28 @@
+{
+  "name": "cognicity-sensors",
+  "version": "0.0.1",
+  "description": "Sensor data support for CogniCity",
+  "main": "index.js",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "pg-promise": "^6.10.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urbanriskmap/cognicity-sensors.git"
+  },
+  "keywords": [
+    "sensor",
+    "cognicity"
+  ],
+  "author": "Tomas Holderness",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/urbanriskmap/cognicity-sensors/issues"
+  },
+  "homepage": "https://github.com/urbanriskmap/cognicity-sensors#readme"
+}
