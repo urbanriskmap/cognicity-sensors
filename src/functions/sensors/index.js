@@ -28,10 +28,12 @@ module.exports.sensors = (event, context, callback) => {
   db.oneOrNone(query).timeout(config.PGTIMEOUT)
     .then((res) => {
       console.log(res);
+      db.$pool.end();
       callback(null, res);
     })
     .catch((err) => {
       console.log(err);
+      db.$pool.end();
       callback(err);
     });
 }
