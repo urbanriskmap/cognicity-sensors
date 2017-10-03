@@ -8,16 +8,20 @@ const pgp = require('pg-promise')({
   promiseLib: Promise, // Use bluebird for enhanced Promises
 });
 
+// Connection object
 const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
 
+// Global db object shared between functions
+const db = pgp(cn);
 
+/**
+ * Endpoint for sensor objects
+ * @function sensors
+ * @param {Object} event - AWS Lambda event object
+ * @param {Object} context - AWS Lambda context object
+ * @param {Object} callback - Callback (HTTP response)
+ */
 module.exports.sensors = (event, context, callback) => {
-
-  console.log('starting');
-
-
-
-  let db = pgp(cn);
 
   let query = `SELECT * FROM cognicity.version()`;
 

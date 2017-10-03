@@ -21,7 +21,7 @@ provider:
 
 # Add one function for each Lambda
 functions:
-  sensorsWebhook: # Lambda that gets triggered when user starts a conversation with Twitter Messenger bot
+  sensorsEndpoint: # Lambda that gets triggered when user starts a conversation with Twitter Messenger bot
     handler: bin/functions/sensors/index.sensors
     timeout: ${file(./.env.yml):timeout}
     environment:
