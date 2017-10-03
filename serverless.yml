@@ -1,8 +1,8 @@
 # CogniCity Sensors Endpoint
-service: cognicity-sensors
+service: cognicity-sensors-v2
 
 custom:
-  projectName: cognicity-sensors
+  projectName: cognicity-sensors-v2
 
 # AWS parameters
 provider:
