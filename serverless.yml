@@ -1,32 +1,38 @@
+# CogniCity Sensors Endpoint
 service: cognicity-sensors
 
 custom:
   projectName: cognicity-sensors
 
+# AWS parameters
 provider:
   name: aws
   runtime: nodejs6.10
   stage: dev
-  region: us-west-2
+  region: ${file(./.env.yml):region}
   stackTags:
-    area: "US"
-
-# You can overwrite defaults by adding the following
-#  stage: dev
-#  region: us-east-1
+    area: ${file(./.env.yml):area_tag}
+  vpc:
+    securityGroupIds:
+      - ${file(./.env.yml):securityGroupIds}
+    subnetIds:
+      - ${file(./.env.yml):subnetIdA}
+      - ${file(./.env.yml):subnetIdB}
 
 # Add one function for each Lambda
 functions:
   sensorsWebhook: # Lambda that gets triggered when user starts a conversation with Twitter Messenger bot
     handler: bin/functions/sensors/index.sensors
+    timeout: ${file(./.env.yml):timeout}
     environment:
-        PGHOST: '127.0.0.1'
-        PGDATABASE: 'cognicity'
-        PGPASSWORD: 'p@ssw0rd'
-        PGPORT: 5432
-        PGSSL: 'true'
-        PGTIMEOUT: 10000
-        PGUSER: 'postgres'
+        PGHOST: ${file(./.env.yml):PGHOST}
+        PGDATABASE: ${file(./.env.yml):PGDATABASE}
+        PGPASSWORD: ${file(./.env.yml):PGPASSWORD}
+        PGPORT: ${file(./.env.yml):PGPORT}
+        PGSSL: ${file(./.env.yml):PGSSL}
+        PGTIMEOUT: ${file(./.env.yml):PGTIMEOUT}
+        PGUSER: ${file(./.env.yml):PGUSER}
+
     events:
       - http:
           path: sensors

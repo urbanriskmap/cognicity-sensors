@@ -8,12 +8,14 @@ const pgp = require('pg-promise')({
   promiseLib: Promise, // Use bluebird for enhanced Promises
 });
 
+const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
+
 
 module.exports.sensors = (event, context, callback) => {
 
   console.log('starting');
 
-  const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
+
 
   let db = pgp(cn);
 
