@@ -1,3 +1,3 @@
-import sensors from '../functions/sensors/index';
+import getSensors from '../functions/getSensors';
 
-sensors.sensors(0,{},function(err, data){console.log(err, data)});
+getSensors(0,{},function(err, data){console.log(err, data)});

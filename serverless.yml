@@ -1,8 +1,8 @@
 # CogniCity Sensors Endpoint
-service: cognicity-sensors-v2
+service: cognicity-sensors-v3
 
 custom:
-  projectName: cognicity-sensors-v2
+  projectName: cognicity-sensors-v3
 
 # AWS parameters
 provider:
@@ -20,9 +20,10 @@ provider:
       - ${file(./.env.yml):subnetIdB}
 
 # Add one function for each Lambda
+# TODO - rate limits
+# TODO - caching
 functions:
-  sensorsEndpoint: # Lambda that gets triggered when user starts a conversation with Twitter Messenger bot
-    handler: bin/functions/sensors/index.sensors
+  getSensors: # Lambda that gets sensors
     timeout: ${file(./.env.yml):timeout}
     environment:
         PGHOST: ${file(./.env.yml):PGHOST}
@@ -32,9 +33,13 @@ functions:
         PGSSL: ${file(./.env.yml):PGSSL}
         PGTIMEOUT: ${file(./.env.yml):PGTIMEOUT}
         PGUSER: ${file(./.env.yml):PGUSER}
-
+    handler: bin/functions/getSensors.default
     events:
       - http:
           path: sensors
           method: GET # This webhook lambda is called by twitter to verify the bot
           integration: lambda
+          parameters:
+            querystrings:
+              bbox: false # optional
+              format: false # optional
