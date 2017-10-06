@@ -6,7 +6,7 @@
   * Tomas Holderness October 2017
 **/
 
-// import testGetSensors from './testGetSensors';
+import testGetSensors from './testGetSensors';
 // import testGetSensorData from './testGetSensorData';
 // import testLibValidate from './testLibValidate';
 
@@ -16,3 +16,5 @@ import getSensorData from '../functions/getSensorData';
 
 getSensors(0,{'a':1},function(err, data){console.log(err, data)});
 getSensorData(0,{},function(err, data){console.log(err, data)}); */
+
+testGetSensors();
