@@ -1,5 +1,5 @@
 import { Pool } from 'pg'; // Postgres
-import getSensors from './model';
+import getSensorData from './model';
 import validate from '../../lib/validate';
 import config from '../../config';
 
@@ -34,12 +34,9 @@ export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let err, bounds, geoformat = null;
+  let err, geoformat = null;
 
   if (event.queryStringParameters){
-    if (event.queryStringParameters.bounds){
-      bounds = event.queryStringParameters.bounds;
-    }
     if (event.queryStringParameters.geoformat){
       geoFormat = event.queryStringParameters.geoformat;
     }
@@ -50,12 +47,7 @@ export default (event, context, callback) => {
     _raiseClientError(400, err, call)
   }
 
-  err, bounds = validate(config).bounds(bounds);
-  if (err){
-    _raiseClientError(400, err, callback)
-  }
-
-  getSensors(config, pool).getData(bounds, geoformat)
+  getSensorData(config, pool).getData(context.resourcePath, geoformat)
     .then((data) => {
       callback(null, {
         statusCode: 200,

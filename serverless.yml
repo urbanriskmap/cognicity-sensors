@@ -43,3 +43,22 @@ functions:
             querystrings:
               bbox: false # optional
               format: false # optional
+  getSensorData: # Lambda that gets sensor data
+    timeout: ${file(./.env.yml):timeout}
+    environment:
+        PGHOST: ${file(./.env.yml):PGHOST}
+        PGDATABASE: ${file(./.env.yml):PGDATABASE}
+        PGPASSWORD: ${file(./.env.yml):PGPASSWORD}
+        PGPORT: ${file(./.env.yml):PGPORT}
+        PGSSL: ${file(./.env.yml):PGSSL}
+        PGTIMEOUT: ${file(./.env.yml):PGTIMEOUT}
+        PGUSER: ${file(./.env.yml):PGUSER}
+    handler: bin/functions/getSensorData.default
+    events:
+      - http:
+          path: sensors/{id}
+          method: GET # This webhook lambda is called by twitter to verify the bot
+          integration: lambda
+          parameters:
+            paths:
+              id: true

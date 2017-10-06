@@ -1,6 +1,5 @@
-import Promise from 'bluebird';
-// Import DBGeo
-import dbgeo from 'dbgeo';
+import Promise from 'bluebird'; // Promises
+import dbgeo from 'dbgeo'; // PostGIS
 
 /**
  * getSensor object for getting sensor data
@@ -10,25 +9,6 @@ import dbgeo from 'dbgeo';
  **/
 export default function(config, pool) {
   let methods = {};
-  /**
-    * Validates incoming query parameters from request
-    * @function _validateParams
-    * @param {Object} query - URL query
-    * @return {String} - Type of message
-  **/
-  methods._validateParams = function(query) {
-    // TODO
-  };
-
-  /**
-    * Validates incoming bounding box parameters from request
-    * @function _validateBBOX
-    * @param {Object} bounds - bounds
-    * @return {String} - Type of message
-  **/
-  methods._validateBounds = function(query) {
-    // TODO
-  };
 
   /**
     * Process incoming message and issue reply message if required
@@ -36,17 +16,27 @@ export default function(config, pool) {
     * @param {Object} event - Event object
     * @return {Object} - Promise that all messages issued
   **/
-  methods.getData = () => new Promise((resolve, reject) => {
+  methods.getData = (bounds, geoFormat) => new Promise((resolve, reject) => {
+
+    let _defaults = {
+      outputFormat: geoFormat,
+      geometryColumn: config.GEO_COLUMN,
+      geometryType: 'wkb',
+      precision: config.GEO_PRECISION
+    };
 
     // Get a client from the pool
     pool.connect()
       .then(client => {
+        let query = `SELECT * FROM ${config.TABLE_SENSOR_METADATA}
+                    WHERE ( ${config.GEO_COLUMN} @ ST_MakeEnvelope($1, $2, $3, $4, ${config.GEO_SRID}))`;
+
         // Query
-        return client.query(`SELECT * FROM sensors.metadata;`)
+        return client.query(query, bounds)
           .then(result => {
             client.release(); // !Important - release the client to the pool
             console.log(`${result.rows.length} results found`);
-            dbgeo.parse(result.rows, config, (err, parsed) => {
+            dbgeo.parse(result.rows, _defaults, (err, parsed) => {
               if (err){
                 reject(err);
               }
