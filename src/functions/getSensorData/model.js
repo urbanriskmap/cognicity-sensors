@@ -13,42 +13,42 @@ export default function(config, pool) {
   /**
     * Process incoming message and issue reply message if required
     * @function process
-    * @param {Object} event - Event object
+    * @param {Object} id - Sensor id
+    * @param {Object} geoformat - output format type
     * @return {Object} - Promise that all messages issued
   **/
-  methods.getData = (id, geoFormat) => new Promise((resolve, reject) => {
-
+  methods.getData = (id, geoformat) => new Promise((resolve, reject) => {
     let _defaults = {
-      outputFormat: geoFormat,
+      outputFormat: geoformat,
       geometryColumn: config.GEO_COLUMN,
       geometryType: 'wkb',
-      precision: config.GEO_PRECISION
+      precision: config.GEO_PRECISION,
     };
 
     // Get a client from the pool
     pool.connect()
-      .then(client => {
+      .then((client) => {
         let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
                     WHERE id = $1`;
 
         // Query
         return client.query(query, [id])
-          .then(result => {
+          .then((result) => {
             client.release(); // !Important - release the client to the pool
             console.log(`${result.rows.length} results found`);
             dbgeo.parse(result.rows, _defaults, (err, parsed) => {
-              if (err){
+              if (err) {
                 reject(err);
               }
               // Return result
               resolve(parsed);
-            })
+            });
           })
-          .catch(err => {
+          .catch((err) => {
             client.release(); // !Important - release the client to the pool
             reject(err);
-          })
-      })
+          });
+      });
   });
   return methods;
 }

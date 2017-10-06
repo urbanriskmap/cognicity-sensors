@@ -1,4 +1,4 @@
-import { Pool } from 'pg'; // Postgres
+import {Pool} from 'pg'; // Postgres
 import getSensors from './model';
 import validate from '../../lib/validate';
 import config from '../../config';
@@ -13,13 +13,13 @@ pool.CREATED = Date.now(); // Smash this into the pool object
 // Catch database errors
 // TODO pass this back to Lambda
 pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err)
+  console.error('Unexpected error on idle client', err);
 });
 
 // Return an error in Lambda format
 const _raiseClientError = (code, err, callback) => callback(null, {
   statusCode: code,
-  body: JSON.stringify(err)
+  body: JSON.stringify(err),
 });
 
 /**
@@ -30,39 +30,40 @@ const _raiseClientError = (code, err, callback) => callback(null, {
  * @param {Object} callback - Callback (HTTP response)
  */
 export default (event, context, callback) => {
-
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let err, bounds, geoformat = null;
+  let err = null;
+  let bounds = null;
+  let geoformat = null;
 
-  if (event.queryStringParameters){
-    if (event.queryStringParameters.bounds){
+  if (event.queryStringParameters) {
+    if (event.queryStringParameters.bounds) {
       bounds = event.queryStringParameters.bounds;
     }
-    if (event.queryStringParameters.geoformat){
-      geoFormat = event.queryStringParameters.geoformat;
+    if (event.queryStringParameters.geoformat) {
+      geoformat = event.queryStringParameters.geoformat;
     }
   }
 
   err, geoformat = validate(config).geoFormat(geoformat);
-  if (err){
-    _raiseClientError(400, err, call)
+  if (err) {
+    _raiseClientError(400, err, callback);
   }
 
   err, bounds = validate(config).bounds(bounds);
-  if (err){
-    _raiseClientError(400, err, callback)
+  if (err) {
+    _raiseClientError(400, err, callback);
   }
 
   getSensors(config, pool).getData(bounds, geoformat)
     .then((data) => {
       callback(null, {
         statusCode: 200,
-        body: JSON.stringify(data)
-      })
+        body: JSON.stringify(data),
+      });
     })
     .catch((err) => {
       _raiseClientError(500, JSON.stringify(err), callback);
     });
-}
+};

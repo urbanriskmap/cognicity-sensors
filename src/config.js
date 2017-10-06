@@ -4,7 +4,9 @@
  * @return {Object} Configuration
 **/
 
-require('dotenv').config({silent:true});
+/* eslint-disable max-len */
+
+require('dotenv').config({silent: true});
 
 export default {
   PGHOST: process.env.PGHOST || '127.0.0.1',
@@ -20,5 +22,5 @@ export default {
   GEO_PRECISION: process.env.GEO_PRECISION || 10,
   GEO_SRID: process.env.GEO_SRID || 4326,
   TABLE_SENSOR_METADATA: process.env.TABLE_SENSOR_METADATA || 'sensors.metadata',
-  TABLE_SENSOR_DATA: process.env.TABLE_SENSOR_DATA || 'sensors.data'
-}
+  TABLE_SENSOR_DATA: process.env.TABLE_SENSOR_DATA || 'sensors.data',
+};
