@@ -33,9 +33,8 @@ export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let err = null;
-  let bounds = null;
-  let geoformat = null;
+  let queryBounds = null;
+  let queryGeoFormat = null;
 
   if (event.queryStringParameters) {
     if (event.queryStringParameters.bounds) {
@@ -46,12 +45,12 @@ export default (event, context, callback) => {
     }
   }
 
-  geoformat = validate(config).geoFormat(queryGeoFormat);
+  let geoformat = validate(config).geoFormat(queryGeoFormat);
   if (geoformat.err) {
     _raiseClientError(400, geoformat.err, callback);
   }
 
-  bounds = validate(config).bounds(queryBounds);
+  let bounds = validate(config).bounds(queryBounds);
   if (bounds.err) {
     _raiseClientError(400, bounds.err, callback);
   }

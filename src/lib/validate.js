@@ -10,7 +10,7 @@ export default function(config) {
     * Validates incoming bounding box parameters from request
     * @function bounds
     * @param {Array} bbox - Bounds as [xmin, ymin, xmax, ymax]
-    * @return {Array} - Bounds
+    * @return {Object} - Bounds object
   **/
   methods.bounds = function(bbox) {
     if (bbox) {
@@ -34,17 +34,18 @@ export default function(config) {
     * Validates incoming bounding box parameters from request
     * @function geoFormat
     * @param {String} format - Requested format
-    * @return {String} - Geo format
+    * @return {Object} - Geo format object
   **/
   methods.geoFormat = function(format) {
     if (format) {
       if (config.GEO_FORMATS.includes(format)) {
-        return (null, format);
+        return {err: null, value: format};
       } else {
-        return ('geo format value must be one of ' + config.GEO_FORMATS);
+        return {err: 'geo format value must be one of ' + config.GEO_FORMATS,
+                value: null};
       }
     } else {
-      return (null, config.GEO_FORMAT_DEFAULT);
+      return {err: null, value: config.GEO_FORMAT_DEFAULT};
     }
   };
   return methods;

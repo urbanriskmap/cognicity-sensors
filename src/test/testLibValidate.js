@@ -8,7 +8,7 @@ import validate from '../lib/validate';
  * @param {Object} config - Sensors configuration object
  */
 export default function(config) {
-  describe('Validation methods testing', function() {
+  describe('Bounds validation method testing', function() {
     it('catches less than 4 bounds params', function() {
       let bounds = validate(config).bounds('1,2,3');
       test.value(bounds.err)
@@ -39,6 +39,30 @@ export default function(config) {
       let bounds = validate(config).bounds('1.02,54.5,0.9,55.6');
       test.value(bounds.err).is(null);
       test.value(bounds.value).is([1.02, 54.5, 0.9, 55.6]);
+    });
+    it('returns default bounds', function() {
+      let bounds = validate(config).bounds(null);
+      test.value(bounds.err).is(null);
+      test.value(bounds.value).is([-180, -90, 180, 90]);
+    });
+  });
+  describe('Geoformat validation method testing', function() {
+    it('returns default format', function() {
+      let bounds = validate(config).geoFormat(null);
+      test.value(bounds.err).is(null);
+      test.value(bounds.value).is(config.GEO_FORMAT_DEFAULT);
+    });
+    it('catches incorrect formats', function() {
+      let bounds = validate(config).geoFormat('geoxml');
+      test.value(bounds.err)
+        .is(`geo format value must be one of geojson,topojson`);
+      test.value(bounds.value).is(null);
+    });
+    it('returns a valid format', function() {
+      let bounds = validate(config).geoFormat('topojson');
+      test.value(bounds.err)
+        .is(null);
+      test.value(bounds.value).is('topojson');
     });
   });
 }
