@@ -19,7 +19,7 @@ pool.on('error', (err, client) => {
 // Return an error in Lambda format
 const _raiseClientError = (code, err, callback) => callback(null, {
   statusCode: code,
-  body: JSON.stringify(err),
+  body: err,
 });
 
 /**
@@ -28,6 +28,7 @@ const _raiseClientError = (code, err, callback) => callback(null, {
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
+ * @return {Object} event
  */
 export default (event, context, callback) => {
   // Don't wait to exit loop
@@ -47,22 +48,22 @@ export default (event, context, callback) => {
 
   let geoformat = validate(config).geoFormat(queryGeoFormat);
   if (geoformat.err) {
-    _raiseClientError(400, geoformat.err, callback);
+     return _raiseClientError(400, geoformat.err, callback);
   }
 
   let bounds = validate(config).bounds(queryBounds);
   if (bounds.err) {
-    _raiseClientError(400, bounds.err, callback);
+    return _raiseClientError(400, bounds.err, callback);
   }
 
   getSensors(config, pool).getData(bounds.value, geoformat.value)
     .then((data) => {
-      callback(null, {
+      return callback(null, {
         statusCode: 200,
         body: JSON.stringify(data),
       });
     })
     .catch((err) => {
-      _raiseClientError(500, JSON.stringify(err), callback);
+      return _raiseClientError(500, JSON.stringify(err), callback);
     });
 };
