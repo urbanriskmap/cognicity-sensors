@@ -24,6 +24,7 @@
     "mocha": "nyc mocha --compilers js:babel-core/register src/test/index",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint src",
+    "lint-fix": "eslint --fix src",
     "test": "npm run lint && npm run mocha",
     "build": "./node_modules/.bin/babel src -d bin"
   },

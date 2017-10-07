@@ -18,9 +18,9 @@ export default function(config) {
       if (coords.length != 4) {
 return ('bbox value must be in format xmin,ymin,xmax,ymax');
 } else if ((coords[0] < -180 || coords[0] > 180)
-            && (coords[1] < -90 || coords[1] > 90 )
-            && (coords[2] < -180 || coords[2] > 180)
-            && (coords[3] <-90 || coords[3] > 90 )) {
+            || (coords[1] < -90 || coords[1] > 90 )
+            || (coords[2] < -180 || coords[2] > 180)
+            || (coords[3] <-90 || coords[3] > 90 )) {
     return ('bbox values out of range');
 } else {
         return (null, bbox);
