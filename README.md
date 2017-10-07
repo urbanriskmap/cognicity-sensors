@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/urbanriskmap/cognicity-sensors.svg?branch=dev)](https://travis-ci.org/urbanriskmap/cognicity-sensors)[![Coverage Status](https://coveralls.io/repos/github/urbanriskmap/cognicity-sensors/badge.svg?branch=dev)](https://coveralls.io/github/urbanriskmap/cognicity-sensors?branch=dev)
+[![Build Status](https://travis-ci.org/urbanriskmap/cognicity-sensors.svg?branch=dev)](https://travis-ci.org/urbanriskmap/cognicity-sensors) [![Coverage Status](https://coveralls.io/repos/github/urbanriskmap/cognicity-sensors/badge.svg?branch=dev)](https://coveralls.io/github/urbanriskmap/cognicity-sensors?branch=dev)
 
 # cognicity-sensors
 Scaleable sensors infrastructure for CogniCity.
