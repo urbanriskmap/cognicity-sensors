@@ -39,24 +39,24 @@ export default (event, context, callback) => {
 
   if (event.queryStringParameters) {
     if (event.queryStringParameters.bounds) {
-      bounds = event.queryStringParameters.bounds;
+      queryBounds = event.queryStringParameters.bounds;
     }
     if (event.queryStringParameters.geoformat) {
-      geoformat = event.queryStringParameters.geoformat;
+      queryGeoFormat = event.queryStringParameters.geoformat;
     }
   }
 
-  err, geoformat = validate(config).geoFormat(geoformat);
-  if (err) {
-    _raiseClientError(400, err, callback);
+  geoformat = validate(config).geoFormat(queryGeoFormat);
+  if (geoformat.err) {
+    _raiseClientError(400, geoformat.err, callback);
   }
 
-  err, bounds = validate(config).bounds(bounds);
-  if (err) {
-    _raiseClientError(400, err, callback);
+  bounds = validate(config).bounds(queryBounds);
+  if (bounds.err) {
+    _raiseClientError(400, bounds.err, callback);
   }
 
-  getSensors(config, pool).getData(bounds, geoformat)
+  getSensors(config, pool).getData(bounds.value, geoformat.value)
     .then((data) => {
       callback(null, {
         statusCode: 200,
