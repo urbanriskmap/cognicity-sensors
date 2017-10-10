@@ -17,9 +17,15 @@ pool.on('error', (err, client) => {
 });
 
 // Return an error in Lambda format
+// Return an error in Lambda format
 const _raiseClientError = (code, err, callback) => callback(null, {
   statusCode: code,
-  body: JSON.stringify(err),
+  body: err,
+});
+
+const _successResponse = (code, body, callback) => callback(null, {
+  statusCode: code,
+  body: body,
 });
 
 /**
@@ -28,33 +34,30 @@ const _raiseClientError = (code, err, callback) => callback(null, {
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
+ * @return {Object} response - Response passed to callback
  */
 export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let err = null;
-  let geoformat = null;
+  let queryGeoFormat = null;
 
   if (event.queryStringParameters) {
     if (event.queryStringParameters.geoformat) {
-      geoformat = event.queryStringParameters.geoformat;
+      queryGeoFormat = event.queryStringParameters.geoformat;
     }
   }
 
-  err, geoformat = validate(config).geoFormat(geoformat);
-  if (err) {
-    _raiseClientError(400, err, callback);
+  let geoformat = validate(config).geoFormat(queryGeoFormat);
+  if (geoformat.err) {
+     return _raiseClientError(400, geoformat.err, callback);
   }
 
   getSensorData(config, pool).getData(context.resourcePath, geoformat)
     .then((data) => {
-      callback(null, {
-        statusCode: 200,
-        body: JSON.stringify(data),
-      });
+      return _successResponse(200, JSON.stringify(data), callback);
     })
     .catch((err) => {
-      _raiseClientError(500, JSON.stringify(err), callback);
+      return _raiseClientError(500, JSON.stringify(err), callback);
     });
 };

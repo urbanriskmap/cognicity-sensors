@@ -22,13 +22,18 @@ const _raiseClientError = (code, err, callback) => callback(null, {
   body: err,
 });
 
+const _successResponse = (code, body, callback) => callback(null, {
+  statusCode: code,
+  body: body,
+});
+
 /**
  * Endpoint for sensor objects
  * @function sensors
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
- * @return {Object} event
+ * @return {Object} response - Response passed to callback
  */
 export default (event, context, callback) => {
   // Don't wait to exit loop
@@ -58,10 +63,7 @@ export default (event, context, callback) => {
 
   getSensors(config, pool).getData(bounds.value, geoformat.value)
     .then((data) => {
-      return callback(null, {
-        statusCode: 200,
-        body: JSON.stringify(data),
-      });
+      return _successResponse(200, JSON.stringify(data), callback);
     })
     .catch((err) => {
       return _raiseClientError(500, JSON.stringify(err), callback);
