@@ -59,7 +59,7 @@ export default (event, context, callback) => {
       }
   }
 
-  postSensor(config, pool).postData(1, 2)
+  postSensor(config, pool).addSensor(event.body.properties, event.body.location)
     .then((data) => {
       return _successResponse(200, JSON.stringify(data), callback);
     })

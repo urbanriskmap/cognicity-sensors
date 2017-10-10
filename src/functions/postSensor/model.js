@@ -11,15 +11,16 @@ export default function(config, pool) {
   let methods = {};
 
   /**
-    * Process incoming message and issue reply message if required
+    * Add sensor to database
     * @function process
-    * @param {Array} bounds - Bounding box (xmin, ymin, xmax, ymax)
-    * @param {String} geoformat - Output geoformat
+    * @param {Array} properties - Sensor properties
+    * @param {String} location - Location object {lat, lng}
     * @return {Object} - Promise that all messages issued
     */
-  methods.postData = (bounds, geoformat) => new Promise((resolve, reject) => {
+  methods.addSensor = (properties, location) => new Promise(
+    (resolve, reject) => {
     let _defaults = {
-      outputFormat: geoformat,
+      outputFormat: config.GEO_FORMAT_DEFAULT,
       geometryColumn: config.GEO_COLUMN,
       geometryType: 'wkb',
       precision: config.GEO_PRECISION,
@@ -28,15 +29,15 @@ export default function(config, pool) {
     // Get a client from the pool
     pool.connect()
       .then((client) => {
-        let query = `SELECT * FROM ${config.TABLE_SENSOR_METADATA}
-                    WHERE ( ${config.GEO_COLUMN} @ ST_MakeEnvelope($1, $2, $3,
-                      $4, ${config.GEO_SRID}))`;
+        let query = `INSERT INTO ${config.TABLE_SENSOR_METADATA}
+                    (properties, ${config.GEO_COLUMN})
+                    VALUES ($1, ST_SetSRID(ST_Point($2,$3), ${config.GEO_SRID}))
+                    RETURNING id, created, properties, the_geom`;
 
         // Query
-        return client.query(query, bounds)
+        return client.query(query, [properties, location.lat, location.lng])
           .then((result) => {
             client.release(); // !Important - release the client to the pool
-            console.log(`${result.rows.length} results found`);
             dbgeo.parse(result.rows, _defaults, (err, parsed) => {
               if (err) {
                 reject(err);
