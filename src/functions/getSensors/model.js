@@ -16,7 +16,7 @@ export default function(config, pool) {
     * @param {Array} bounds - Bounding box (xmin, ymin, xmax, ymax)
     * @param {String} geoformat - Output geoformat
     * @return {Object} - Promise that all messages issued
-  **/
+    */
   methods.getData = (bounds, geoformat) => new Promise((resolve, reject) => {
     let _defaults = {
       outputFormat: geoformat,

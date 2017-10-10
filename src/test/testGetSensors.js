@@ -1,5 +1,4 @@
 import * as test from 'unit.js';
-
 import getSensors from '../functions/getSensors/index';
 
 /**
@@ -8,7 +7,7 @@ import getSensors from '../functions/getSensors/index';
  * @param {Object} config - Sensors config parameter
  */
 export default function(config) {
-  describe('Get Sensors Model Testing', function() {
+  describe('Get Sensors Handler Testing', function() {
     it('Rejects bad bounds query parameter', function(done) {
       let event = {};
       let context = {};
