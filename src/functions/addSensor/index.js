@@ -1,6 +1,6 @@
 import {Pool} from 'pg'; // Postgres
 import Joi from 'joi'; // validation
-import postSensor from './model';
+import addSensor from './model';
 import config from '../../config';
 
 // Connection object
@@ -47,19 +47,19 @@ export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  // need geom and properties
+  const requestBody = JSON.parse(event.body);
 
   if (!event.body) {
     return _raiseClientError(400, 'Requires sensor properties and location',
     callback);
   } else {
-    let result = Joi.validate(event.body, _schema);
+    let result = Joi.validate(requestBody, _schema);
       if (result.error) {
         return _raiseClientError(400, result.error.message, callback);
       }
   }
 
-  postSensor(config, pool).addSensor(event.body.properties, event.body.location)
+  addSensor(config, pool).postData(requestBody.properties, requestBody.location)
     .then((data) => {
       return _successResponse(200, JSON.stringify(data), callback);
     })

@@ -17,7 +17,7 @@ export default function(config, pool) {
     * @param {String} location - Location object {lat, lng}
     * @return {Object} - Promise that all messages issued
     */
-  methods.addSensor = (properties, location) => new Promise(
+  methods.postData = (properties, location) => new Promise(
     (resolve, reject) => {
     let _defaults = {
       outputFormat: config.GEO_FORMAT_DEFAULT,

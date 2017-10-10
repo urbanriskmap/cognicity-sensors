@@ -1,5 +1,5 @@
 import * as test from 'unit.js';
-import postSensor from '../functions/postSensor/index';
+import addSensor from '../functions/addSensor/index';
 
 /**
  * Post sensor data model testing harness
@@ -12,7 +12,7 @@ export default function(config) {
       let event = {};
       let context = {};
       event.body = null;
-      postSensor(event, context, function(err, response) {
+      addSensor(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
           .is(`Requires sensor properties and location`);
@@ -22,8 +22,9 @@ export default function(config) {
     it('Catches missing properties', function(done) {
       let event = {};
       let context = {};
-      event.body = {location: {lat: 1, lon: 2}, properties: null};
-      postSensor(event, context, function(err, response) {
+      event.body = JSON.stringify({location: {lat: 1, lon: 2},
+        properties: null});
+      addSensor(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
           .is(`child "properties" fails because ` +
@@ -34,8 +35,8 @@ export default function(config) {
     it('Catches missing location', function(done) {
       let event = {};
       let context = {};
-      event.body = {location: null, properties: {a: 1}};
-      postSensor(event, context, function(err, response) {
+      event.body = JSON.stringify({location: null, properties: {a: 1}});
+      addSensor(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
           .is(`child "location" fails because ["location" must be an object]`);
@@ -45,8 +46,9 @@ export default function(config) {
     it('Catches bad latitude', function(done) {
       let event = {};
       let context = {};
-      event.body = {location: {lat: -91, lng: 0}, properties: {a: 1}};
-      postSensor(event, context, function(err, response) {
+      event.body = JSON.stringify({location: {lat: -91, lng: 0},
+        properties: {a: 1}});
+      addSensor(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
           .is(`child "location" fails because [child "lat" fails because ` +
@@ -57,8 +59,9 @@ export default function(config) {
     it('Catches bad latitude', function(done) {
       let event = {};
       let context = {};
-      event.body = {location: {lat: 1, lng: -181}, properties: {a: 1}};
-      postSensor(event, context, function(err, response) {
+      event.body = JSON.stringify({location: {lat: 1, lng: -181},
+        properties: {a: 1}});
+      addSensor(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
           .is(`child "location" fails because [child "lng" fails because ` +
