@@ -18,6 +18,8 @@ provider:
     subnetIds:
       - ${file(./.env.yml):subnetIdA}
       - ${file(./.env.yml):subnetIdB}
+  apiKeys:
+    - ${file(./.env.yml):apiKey}
 
 # Add one function for each Lambda
 # TODO - rate limits
@@ -62,22 +64,23 @@ functions:
           parameters:
             paths:
               id: true
-    addSensor: # Lambda that posts sensor metadata
-      timeout: ${file(./.env.yml):timeout}
-      environment:
-          PGHOST: ${file(./.env.yml):PGHOST}
-          PGDATABASE: ${file(./.env.yml):PGDATABASE}
-          PGPASSWORD: ${file(./.env.yml):PGPASSWORD}
-          PGPORT: ${file(./.env.yml):PGPORT}
-          PGSSL: ${file(./.env.yml):PGSSL}
-          PGTIMEOUT: ${file(./.env.yml):PGTIMEOUT}
-          PGUSER: ${file(./.env.yml):PGUSER}
-      handler: bin/functions/addSensor.default
-      events:
-        - http:
-            path: sensors/
-            method: POST # This webhook lambda is called by twitter to verify the bot
-            integration: lambda
+  addSensor: # Lambda that posts sensor metadata
+    timeout: ${file(./.env.yml):timeout}
+    environment:
+        PGHOST: ${file(./.env.yml):PGHOST}
+        PGDATABASE: ${file(./.env.yml):PGDATABASE}
+        PGPASSWORD: ${file(./.env.yml):PGPASSWORD}
+        PGPORT: ${file(./.env.yml):PGPORT}
+        PGSSL: ${file(./.env.yml):PGSSL}
+        PGTIMEOUT: ${file(./.env.yml):PGTIMEOUT}
+        PGUSER: ${file(./.env.yml):PGUSER}
+    handler: bin/functions/addSensor.default
+    events:
+      - http:
+          path: sensors/
+          method: POST # This webhook lambda is called by twitter to verify the bot
+          integration: lambda
+          private: true
   addSensorData: # Lambda that gets sensor data
     timeout: ${file(./.env.yml):timeout}
     environment:
@@ -97,3 +100,4 @@ functions:
           parameters:
             paths:
               id: true
+              private: true
