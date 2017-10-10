@@ -48,7 +48,7 @@ export default (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   let sensorId = null;
-  const requestBody = JSON.parse(event.body);
+  let requestBody = null;
 
   // validate sensor/:id
   sensorId = Joi.validate(context.resourcePath, _resourceSchema);
@@ -60,6 +60,7 @@ export default (event, context, callback) => {
     return _raiseClientError(400, 'Requires sensor properties and location',
     callback);
   } else {
+    requestBody = JSON.parse(event.body);
     let result = Joi.validate(requestBody, _bodySchema);
       if (result.error) {
         return _raiseClientError(400, result.error.message, callback);

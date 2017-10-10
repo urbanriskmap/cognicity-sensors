@@ -22,8 +22,7 @@ export default function(config) {
     it('Catches missing properties', function(done) {
       let event = {};
       let context = {};
-      event.body = JSON.stringify({location: {lat: 1, lon: 2},
-        properties: null});
+      event.body = JSON.stringify({location: null, properties: null});
       addSensor(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)

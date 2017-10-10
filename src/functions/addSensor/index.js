@@ -47,12 +47,13 @@ export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  const requestBody = JSON.parse(event.body);
+  let requestBody = null;
 
   if (!event.body) {
     return _raiseClientError(400, 'Requires sensor properties and location',
     callback);
   } else {
+    requestBody = JSON.parse(event.body);
     let result = Joi.validate(requestBody, _schema);
       if (result.error) {
         return _raiseClientError(400, result.error.message, callback);
