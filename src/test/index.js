@@ -8,7 +8,8 @@
 
 import testGetSensors from './testGetSensors';
 import testGetSensorData from './testGetSensorData';
-import testPostSensor from './testPostSensor';
+import testAddSensor from './testAddSensor';
+import testAddSensorData from './testAddSensorData';
 import testLibValidate from './testLibValidate';
 
 
@@ -22,4 +23,5 @@ import config from '../config';
 testLibValidate(config);
 testGetSensors(config);
 testGetSensorData(config);
-testPostSensor(config);
+testAddSensor(config);
+testAddSensorData(config);

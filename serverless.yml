@@ -62,7 +62,7 @@ functions:
           parameters:
             paths:
               id: true
-    addSensor: # Lambda that gets sensor data
+    addSensor: # Lambda that posts sensor metadata
       timeout: ${file(./.env.yml):timeout}
       environment:
           PGHOST: ${file(./.env.yml):PGHOST}
@@ -78,3 +78,22 @@ functions:
             path: sensors/
             method: POST # This webhook lambda is called by twitter to verify the bot
             integration: lambda
+  addSensorData: # Lambda that gets sensor data
+    timeout: ${file(./.env.yml):timeout}
+    environment:
+        PGHOST: ${file(./.env.yml):PGHOST}
+        PGDATABASE: ${file(./.env.yml):PGDATABASE}
+        PGPASSWORD: ${file(./.env.yml):PGPASSWORD}
+        PGPORT: ${file(./.env.yml):PGPORT}
+        PGSSL: ${file(./.env.yml):PGSSL}
+        PGTIMEOUT: ${file(./.env.yml):PGTIMEOUT}
+        PGUSER: ${file(./.env.yml):PGUSER}
+    handler: bin/functions/addSensorData.default
+    events:
+      - http:
+          path: sensors/{id}
+          method: POST # This webhook lambda is called by twitter to verify the bot
+          integration: lambda
+          parameters:
+            paths:
+              id: true
