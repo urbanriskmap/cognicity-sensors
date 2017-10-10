@@ -15,7 +15,7 @@ export default function(config) {
       addSensor(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
-          .is(`Requires sensor properties and location`);
+          .is(`"value" must be an object`);
         done();
       });
     });
@@ -28,6 +28,18 @@ export default function(config) {
         test.value(response.body)
           .is(`child "properties" fails because ` +
               `["properties" must be an object]`);
+        done();
+      });
+    });
+    it('Catches empty body', function(done) {
+      let event = {};
+      let context = {};
+      event.body = {location: {lat: 1, lng: 1}, properties: {}};
+      addSensor(event, context, function(err, response) {
+        test.value(response.statusCode).is(400);
+        test.value(response.body)
+          .is(`child "properties" fails because ` +
+          `["properties" must have at least 1 children]`);
         done();
       });
     });

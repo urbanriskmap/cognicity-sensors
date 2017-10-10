@@ -28,7 +28,7 @@ const _successResponse = (code, body, callback) => callback(null, {
 });
 
 const _schema = Joi.object().keys({
-  properties: Joi.object().required(),
+  properties: Joi.object().min(1).required(),
   location: Joi.object().required().keys({
     lat: Joi.number().min(-90).max(90).required(),
     lng: Joi.number().min(-180).max(180).required(),
@@ -47,18 +47,13 @@ export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let requestBody = null;
+  const requestBody = event.body;
 
-  if (!event.body) {
-    return _raiseClientError(400, 'Requires sensor properties and location',
-    callback);
-  } else {
-    requestBody = JSON.parse(event.body);
-    let result = Joi.validate(requestBody, _schema);
-      if (result.error) {
-        return _raiseClientError(400, result.error.message, callback);
-      }
-  }
+  let result = Joi.validate(requestBody, _schema);
+    if (result.error) {
+      return _raiseClientError(400, result.error.message, callback);
+    }
+
 
   addSensor(config, pool).postData(requestBody.properties, requestBody.location)
     .then((data) => {
