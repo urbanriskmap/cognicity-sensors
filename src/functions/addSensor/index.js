@@ -57,7 +57,7 @@ export default (event, context, callback) => {
 
   addSensor(config, pool).postData(requestBody.properties, requestBody.location)
     .then((data) => {
-      return _successResponse(200, JSON.stringify(data), callback);
+      return _successResponse(200, data, callback);
     })
     .catch((err) => {
       return _raiseClientError(500, JSON.stringify(err), callback);

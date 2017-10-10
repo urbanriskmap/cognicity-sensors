@@ -1,6 +1,5 @@
 import {Pool} from 'pg'; // Postgres
 import getSensorData from './model';
-import validate from '../../lib/validate';
 import config from '../../config';
 
 // Connection object
@@ -34,28 +33,14 @@ const _successResponse = (code, body, callback) => callback(null, {
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
- * @return {Object} response - Response passed to callback
  */
 export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let queryGeoFormat = null;
-
-  if (event.queryStringParameters) {
-    if (event.queryStringParameters.geoformat) {
-      queryGeoFormat = event.queryStringParameters.geoformat;
-    }
-  }
-
-  let geoformat = validate(config).geoFormat(queryGeoFormat);
-  if (geoformat.err) {
-     return _raiseClientError(400, geoformat.err, callback);
-  }
-
-  getSensorData(config, pool).getData(context.resourcePath, geoformat)
+  getSensorData(config, pool).getData(context.resourcePath)
     .then((data) => {
-      return _successResponse(200, JSON.stringify(data), callback);
+      return _successResponse(200, data, callback);
     })
     .catch((err) => {
       return _raiseClientError(500, JSON.stringify(err), callback);

@@ -1,5 +1,4 @@
 import Promise from 'bluebird'; // Promises
-import dbgeo from 'dbgeo'; // PostGIS
 
 /**
  * getSensor object for getting sensor data
@@ -17,14 +16,7 @@ export default function(config, pool) {
     * @param {Object} geoformat - output format type
     * @return {Object} - Promise that all messages issued
   **/
-  methods.getData = (id, geoformat) => new Promise((resolve, reject) => {
-    let _defaults = {
-      outputFormat: geoformat,
-      geometryColumn: config.GEO_COLUMN,
-      geometryType: 'wkb',
-      precision: config.GEO_PRECISION,
-    };
-
+  methods.getData = (id) => new Promise((resolve, reject) => {
     // Get a client from the pool
     pool.connect()
       .then((client) => {
@@ -36,19 +28,14 @@ export default function(config, pool) {
           .then((result) => {
             client.release(); // !Important - release the client to the pool
             console.log(`${result.rows.length} results found`);
-            dbgeo.parse(result.rows, _defaults, (err, parsed) => {
-              if (err) {
-                reject(err);
-              }
               // Return result
-              resolve(parsed);
-            });
+              resolve(result.rows);
           })
           .catch((err) => {
             client.release(); // !Important - release the client to the pool
             reject(err);
           });
       });
-  });
+    });
   return methods;
 }

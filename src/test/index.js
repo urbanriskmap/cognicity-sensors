@@ -7,7 +7,7 @@
 **/
 
 import testGetSensors from './testGetSensors';
-import testGetSensorData from './testGetSensorData';
+// import testGetSensorData from './testGetSensorData';
 import testAddSensor from './testAddSensor';
 import testAddSensorData from './testAddSensorData';
 import testLibValidate from './testLibValidate';
@@ -22,6 +22,6 @@ import config from '../config';
 
 testLibValidate(config);
 testGetSensors(config);
-testGetSensorData(config);
+// testGetSensorData(config);
 testAddSensor(config);
 testAddSensorData(config);

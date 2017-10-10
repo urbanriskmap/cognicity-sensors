@@ -15,7 +15,7 @@ export default function(config) {
       addSensorData(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
-          .is(`Requires sensor properties and location`);
+          .is(`"value" must be an object`);
         done();
       });
     });

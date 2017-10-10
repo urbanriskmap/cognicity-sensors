@@ -28,7 +28,7 @@ const _successResponse = (code, body, callback) => callback(null, {
 });
 
 const _bodySchema = Joi.object().keys({
-  properties: Joi.object().required(),
+  properties: Joi.object().min(1).required(),
 });
 
 const _resourceSchema = Joi.object().keys({
@@ -48,7 +48,7 @@ export default (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   let sensorId = null;
-  let requestBody = null;
+  const requestBody = event.body;
 
   // validate sensor/:id
   sensorId = Joi.validate(context.resourcePath, _resourceSchema);
@@ -56,21 +56,15 @@ export default (event, context, callback) => {
     return _raiseClientError(400, sensorId.error.message, callback);
   }
 
-  if (!event.body) {
-    return _raiseClientError(400, 'Requires sensor properties and location',
-    callback);
-  } else {
-    requestBody = JSON.parse(event.body);
-    let result = Joi.validate(requestBody, _bodySchema);
-      if (result.error) {
-        return _raiseClientError(400, result.error.message, callback);
-      }
-  }
+  let result = Joi.validate(requestBody, _bodySchema);
+    if (result.error) {
+      return _raiseClientError(400, result.error.message, callback);
+    }
 
   addSensorData(config, pool).postData(sensorId.value.id,
     requestBody.properties)
     .then((data) => {
-      return _successResponse(200, JSON.stringify(data), callback);
+      return _successResponse(200, data, callback);
     })
     .catch((err) => {
       return _raiseClientError(500, JSON.stringify(err), callback);
