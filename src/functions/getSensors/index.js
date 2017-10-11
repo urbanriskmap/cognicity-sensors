@@ -1,6 +1,6 @@
 import {Pool} from 'pg'; // Postgres
 import getSensors from './model';
-import validate from '../../lib/validate';
+import Joi from 'joi'; // validation
 import config from '../../config';
 
 // Connection object
@@ -27,6 +27,16 @@ const _successResponse = (code, body, callback) => callback(null, {
   body: body,
 });
 
+const _bboxSchema = Joi.array().length(4).items(Joi.number().min(-180).max(180),
+    Joi.number().min(-90).max(90), Joi.number().min(-180).max(180),
+    Joi.number().min(-90).max(90)).default(config.GEO_EXTENTS_DEFAULT);
+
+const _paramSchema = Joi.object().keys({
+  bbox: Joi.string().min(7).max(17),
+  geoformat: Joi.string().valid(config.GEO_FORMATS)
+    .default(config.GEO_FORMAT_DEFAULT),
+});
+
 /**
  * Endpoint for sensor objects
  * @function sensors
@@ -39,29 +49,20 @@ export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
 
-  let queryBounds = null;
-  let queryGeoFormat = null;
-
-  if (event.queryStringParameters) {
-    if (event.queryStringParameters.bounds) {
-      queryBounds = event.queryStringParameters.bounds;
-    }
-    if (event.queryStringParameters.geoformat) {
-      queryGeoFormat = event.queryStringParameters.geoformat;
-    }
+  // Validate URL params
+  let params = Joi.validate(event.queryStringParameters, _paramSchema);
+  if (params.error) {
+    return _raiseClientError(400, params.error.message, callback);
   }
 
-  let geoformat = validate(config).geoFormat(queryGeoFormat);
-  if (geoformat.err) {
-     return _raiseClientError(400, geoformat.err, callback);
+  // Parse bbox string and validate coordinates
+  let bbox = Joi.validate(params.value.bbox.split(','), _bboxSchema);
+  if (bbox.error) {
+    return _raiseClientError(400, bbox.error.message, callback);
   }
 
-  let bounds = validate(config).bounds(queryBounds);
-  if (bounds.err) {
-    return _raiseClientError(400, bounds.err, callback);
-  }
-
-  getSensors(config, pool).getData(bounds.value, geoformat.value)
+  // Call database model
+  getSensors(config, pool).getData(bbox.value, params.value.geoformat)
     .then((data) => {
       return _successResponse(200, data, callback);
     })

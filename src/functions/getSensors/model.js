@@ -18,6 +18,7 @@ export default function(config, pool) {
     * @return {Object} - Promise that all messages issued
     */
   methods.getData = (bounds, geoformat) => new Promise((resolve, reject) => {
+    console.log(geoformat);
     let _defaults = {
       outputFormat: geoformat,
       geometryColumn: config.GEO_COLUMN,
