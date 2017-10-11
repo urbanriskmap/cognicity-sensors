@@ -19,13 +19,17 @@ The CogniCity sensors project is designed to allow for easy consumption of exter
 - At the sensor level endpoint ("/:id") sensors can be filtered by database update time. This is the time that the sensor data was placed into the database and does not necessarily correspond to time of sensor measurement
 
 #### Endpoints
-GET /sensors -> return list of sensors by id and their location as Geo/Topo json
-- optionally filtered by bounding box
+GET /sensors
+- optional parameters:
+  - bbox=lat,lng,lat,lng
+  - geoformat={'geojson' | 'topojson'}
+
 POST /sensors -> register a new sensor (API key protected)
+
 GET /sensors/:id -> return list of sensor data
-- optionally filtered by time entered into database
+
 POST /sensors/:id -> post new data for sensor to database (API key protected)
-GET /sensors/bulk -> optional endpoint for bulk sensor data streaming (API key protected)
+
 
 #### Schema
 - sensors
