@@ -29,12 +29,12 @@ const _successResponse = (code, body, callback) => callback(null, {
 
 const _bboxSchema = Joi.array().length(4).items(Joi.number().min(-180).max(180),
     Joi.number().min(-90).max(90), Joi.number().min(-180).max(180),
-    Joi.number().min(-90).max(90)).default(config.GEO_EXTENTS_DEFAULT);
+    Joi.number().min(-90).max(90));
 
 const _paramSchema = Joi.object().keys({
-  bbox: Joi.string().min(7).max(17),
-  geoformat: Joi.string().valid(config.GEO_FORMATS)
-    .default(config.GEO_FORMAT_DEFAULT),
+  bbox: Joi.string().min(7).max(17).default(config.GEO_EXTENTS_DEFAULT),
+  geoformat: Joi.string().default(config.GEO_FORMAT_DEFAULT)
+    .valid(config.GEO_FORMATS),
 });
 
 /**
@@ -50,10 +50,14 @@ export default (event, context, callback) => {
   context.callbackWaitsForEmptyEventLoop = false;
 
   // Validate URL params
-  let params = Joi.validate(event.queryStringParameters, _paramSchema);
+  let params = Joi.validate(event.query, _paramSchema);
   if (params.error) {
     return _raiseClientError(400, params.error.message, callback);
   }
+
+  console.log(event.query);
+  console.log(params);
+  console.log(event);
 
   // Parse bbox string and validate coordinates
   let bbox = Joi.validate(params.value.bbox.split(','), _bboxSchema);

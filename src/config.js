@@ -17,7 +17,7 @@ export default {
   PGTIMEOUT: process.env.PGTIMEOUT || 10000,
   PGUSER: process.env.PGUSER || 'postgres',
   GEO_COLUMN: process.env.GEO_COLUMN || 'the_geom',
-  GEO_EXTENTS_DEFAULT: (process.env.GEO_EXTENTS_DEFAULT || '-180,-90,180,90').split(','),
+  GEO_EXTENTS_DEFAULT: (process.env.GEO_EXTENTS_DEFAULT || '-180,-90,180,90'), // Coords passed as csv string.
   GEO_FORMAT_DEFAULT: process.env.GEO_FORMAT_DEFAULT || 'geojson',
   GEO_FORMATS: (process.env.GEO_FORMATS || 'geojson,topojson').split(','),
   GEO_PRECISION: process.env.GEO_PRECISION || 10,

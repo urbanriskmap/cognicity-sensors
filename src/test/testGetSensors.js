@@ -11,7 +11,7 @@ export default function(config) {
     it('Rejects bad bbox query parameter', function(done) {
       let event = {};
       let context = {};
-      event.queryStringParameters = {bounds: '1,2,3'};
+      event.query = {bounds: '1,2,3'};
       getSensors(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
@@ -22,7 +22,7 @@ export default function(config) {
     it('Rejects bad bbox latitude value query parameter', function(done) {
       let event = {};
       let context = {};
-      event.queryStringParameters = {bbox: '1,2,3,-181'};
+      event.query = {bbox: '1,2,3,-181'};
       getSensors(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
@@ -33,7 +33,7 @@ export default function(config) {
     it('Rejects bad geoformat query parameter', function(done) {
       let event = {};
       let context = {};
-      event.queryStringParameters = {geoformat: 'geoxml'};
+      event.query = {geoformat: 'geoxml'};
       getSensors(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
