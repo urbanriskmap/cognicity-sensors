@@ -1,5 +1,4 @@
 import Promise from 'bluebird'; // Promises
-import dbgeo from 'dbgeo'; // PostGIS
 
 /**
  * getSensor object for getting sensor data
@@ -19,33 +18,21 @@ export default function(config, pool) {
     */
   methods.postData = (sensorId, properties) => new Promise(
     (resolve, reject) => {
-    let _defaults = {
-      outputFormat: config.GEO_FORMAT_DEFAULT,
-      geometryColumn: config.GEO_COLUMN,
-      geometryType: 'wkb',
-      precision: config.GEO_PRECISION,
-    };
-
     // Get a client from the pool
     pool.connect()
       .then((client) => {
         let query = `INSERT INTO ${config.TABLE_SENSOR_DATA}
-                    (properties, ${config.GEO_COLUMN})
-                    VALUES ($2)
-                    WHERE sensor_id = $1
+                    (sensor_id, properties)
+                    VALUES ($1, $2::json)
                     RETURNING sensor_id, created`;
-
+        console.log(query);
+        console.log([sensorId, properties]);
         // Query
         return client.query(query, [sensorId, properties])
           .then((result) => {
             client.release(); // !Important - release the client to the pool
-            dbgeo.parse(result.rows, _defaults, (err, parsed) => {
-              if (err) {
-                reject(err);
-              }
               // Return result
-              resolve(parsed);
-            });
+              resolve(result.rows);
           })
           .catch((err) => {
             client.release(); // !Important - release the client to the pool

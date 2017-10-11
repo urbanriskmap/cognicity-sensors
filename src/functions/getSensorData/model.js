@@ -18,11 +18,13 @@ export default function(config, pool) {
   **/
   methods.getData = (id) => new Promise((resolve, reject) => {
     // Get a client from the pool
+    console.log(id);
     pool.connect()
       .then((client) => {
         let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
-                    WHERE id = $1`;
-
+                    WHERE sensor_id = $1`;
+        console.log(query);
+        console.log(id);
         // Query
         return client.query(query, [id])
           .then((result) => {

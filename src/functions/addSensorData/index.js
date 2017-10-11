@@ -31,7 +31,7 @@ const _bodySchema = Joi.object().keys({
   properties: Joi.object().min(1).required(),
 });
 
-const _resourceSchema = Joi.object().keys({
+const _pathSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
 });
 
@@ -51,7 +51,7 @@ export default (event, context, callback) => {
   const requestBody = event.body;
 
   // validate sensor/:id
-  sensorId = Joi.validate(context.resourcePath, _resourceSchema);
+  sensorId = Joi.validate(event.path, _pathSchema);
   if (sensorId.error) {
     return _raiseClientError(400, sensorId.error.message, callback);
   }
@@ -60,6 +60,9 @@ export default (event, context, callback) => {
     if (result.error) {
       return _raiseClientError(400, result.error.message, callback);
     }
+
+  console.log(event);
+  console.log(event.path);
 
   addSensorData(config, pool).postData(sensorId.value.id,
     requestBody.properties)

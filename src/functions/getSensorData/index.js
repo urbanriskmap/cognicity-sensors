@@ -1,4 +1,5 @@
 import {Pool} from 'pg'; // Postgres
+import Joi from 'joi'; // validation
 import getSensorData from './model';
 import config from '../../config';
 
@@ -27,18 +28,29 @@ const _successResponse = (code, body, callback) => callback(null, {
   body: body,
 });
 
+const _pathSchema = Joi.object().keys({
+  id: Joi.number().min(1).required(),
+});
+
 /**
  * Endpoint for sensor objects
  * @function sensors
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
+ * @return {Object} response - HTTP response
  */
 export default (event, context, callback) => {
   // Don't wait to exit loop
   context.callbackWaitsForEmptyEventLoop = false;
+  console.log(event.path);
+  // validate sensor/:id
+  let sensorId = Joi.validate(event.path, _pathSchema);
+  if (sensorId.error) {
+    return _raiseClientError(400, sensorId.error.message, callback);
+  }
 
-  getSensorData(config, pool).getData(context.resourcePath)
+  getSensorData(config, pool).getData(sensorId.value.id)
     .then((data) => {
       return _successResponse(200, data, callback);
     })

@@ -97,7 +97,7 @@ functions:
           path: sensors/{id}
           method: POST # This webhook lambda is called by twitter to verify the bot
           integration: lambda
+          private: true
           parameters:
             paths:
               id: true
-              private: true
