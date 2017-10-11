@@ -20,6 +20,9 @@ provider:
       - ${file(./.env.yml):subnetIdB}
   apiKeys:
     - ${file(./.env.yml):apiKey}
+  usagePlan:
+    burstLimit: 150
+    rateLimit: 100
 
 # Add one function for each Lambda
 # TODO - rate limits
