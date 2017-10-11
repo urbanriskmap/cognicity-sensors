@@ -55,10 +55,6 @@ export default (event, context, callback) => {
     return _raiseClientError(400, params.error.message, callback);
   }
 
-  console.log(event.query);
-  console.log(params);
-  console.log(event);
-
   // Parse bbox string and validate coordinates
   let bbox = Joi.validate(params.value.bbox.split(','), _bboxSchema);
   if (bbox.error) {
