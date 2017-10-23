@@ -15,7 +15,7 @@ export default function(config, pool) {
     * @param {Object} dataId - row id for data to be deleted
     * @return {Object} - Promise that all messages issued
   **/
-  methods.getData = (sensorId, dataId) => new Promise((resolve, reject) => {
+  methods.deleteData = (sensorId, dataId) => new Promise((resolve, reject) => {
     pool.connect()
       .then((client) => {
         let query = `DELETE FROM ${config.TABLE_SENSOR_DATA}
