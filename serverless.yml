@@ -41,6 +41,7 @@ functions:
     handler: bin/functions/getSensors.default
     events:
       - http:
+          cors: true
           path: sensors
           method: GET # This webhook lambda is called by twitter to verify the bot
           integration: lambda
@@ -61,6 +62,7 @@ functions:
     handler: bin/functions/getSensorData.default
     events:
       - http:
+          cors: true
           path: sensors/{id}
           method: GET # This webhook lambda is called by twitter to verify the bot
           integration: lambda
@@ -80,6 +82,7 @@ functions:
     handler: bin/functions/addSensor.default
     events:
       - http:
+          cors: true
           path: sensors/
           method: POST # This webhook lambda is called by twitter to verify the bot
           integration: lambda
@@ -97,6 +100,7 @@ functions:
     handler: bin/functions/addSensorData.default
     events:
       - http:
+          cors: true
           path: sensors/{id}
           method: POST # This webhook lambda is called by twitter to verify the bot
           integration: lambda
@@ -117,6 +121,7 @@ functions:
     handler: bin/functions/deleteSensorData.default
     events:
       - http:
+          cors: true
           path: sensors/{id}
           method: DELETE # This webhook lambda is called by twitter to verify the bot
           integration: lambda
