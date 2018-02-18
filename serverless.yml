@@ -43,7 +43,7 @@ functions:
       - http:
           cors: true
           path: sensors
-          method: GET # This webhook lambda is called by twitter to verify the bot
+          method: GET
           integration: lambda
           parameters:
             querystrings:
@@ -64,7 +64,7 @@ functions:
       - http:
           cors: true
           path: sensors/{id}
-          method: GET # This webhook lambda is called by twitter to verify the bot
+          method: GET
           integration: lambda
           parameters:
             paths:
@@ -84,7 +84,7 @@ functions:
       - http:
           cors: true
           path: sensors/
-          method: POST # This webhook lambda is called by twitter to verify the bot
+          method: POST
           integration: lambda
           private: true
   addSensorData: # Lambda that gets sensor data
@@ -102,7 +102,7 @@ functions:
       - http:
           cors: true
           path: sensors/{id}
-          method: POST # This webhook lambda is called by twitter to verify the bot
+          method: POST
           integration: lambda
           private: true
           parameters:
@@ -123,7 +123,7 @@ functions:
       - http:
           cors: true
           path: sensors/{id}
-          method: DELETE # This webhook lambda is called by twitter to verify the bot
+          method: DELETE
           integration: lambda
           private: true
           parameters:
