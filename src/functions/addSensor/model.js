@@ -35,7 +35,7 @@ export default function(config, pool) {
                     RETURNING id, created, properties, the_geom`;
 
         // Query
-        return client.query(query, [properties, location.lat, location.lng])
+        return client.query(query, [properties, location.lng, location.lat])
           .then((result) => {
             client.release(); // !Important - release the client to the pool
             dbgeo.parse(result.rows, _defaults, (err, parsed) => {
