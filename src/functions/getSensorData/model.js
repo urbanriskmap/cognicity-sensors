@@ -22,7 +22,7 @@ export default function(config, pool) {
     pool.connect()
       .then((client) => {
         let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
-                    WHERE sensor_id = $1`;
+                    WHERE sensor_id = $1 ORDER BY created ASC`;
         console.log(query);
         console.log(id);
         // Query
