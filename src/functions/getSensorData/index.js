@@ -1,6 +1,5 @@
 import {Pool} from 'pg'; // Postgres
 import Joi from 'joi'; // validation
-import getSensorData from './model';
 import config from '../../config';
 
 // Connection object
@@ -48,12 +47,23 @@ export default (event, context, callback) => {
   if (sensorId.error) {
     return _raiseClientError(400, sensorId.error.message, callback);
   }
-
-  getSensorData(config, pool).getData(sensorId.value.id)
-    .then((data) => {
-      return _successResponse(200, data, callback);
-    })
-    .catch((err) => {
-      return _raiseClientError(500, JSON.stringify(err), callback);
+  pool.connect()
+    .then((client) => {
+      let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
+                  WHERE sensor_id = $1 ORDER BY created ASC`;
+      console.log(query);
+      console.log(sensorId);
+      // Query
+      client.query(query, [sensorId])
+        .then((result) => {
+          client.release(); // !Important - release the client to the pool
+          console.log(`${result.rows.length} results found`);
+            // Return result
+            return _successResponse(200, result.rows, callback);
+        })
+        .catch((err) => {
+          client.release(); // !Important - release the client to the pool
+          return _raiseClientError(500, JSON.stringify(err.message), callback);
+        });
     });
 };
