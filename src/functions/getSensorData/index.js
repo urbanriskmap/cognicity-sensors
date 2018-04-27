@@ -54,8 +54,9 @@ export default (event, context, callback) => {
                   WHERE sensor_id = $1 ORDER BY created ASC`;
       console.log(query);
       console.log(sensorId);
+      const id = sensorId.id;
       // Query
-      client.query(query, [sensorId])
+      client.query(query, [id])
         .then((result) => {
           client.release(); // !Important - release the client to the pool
           console.log(`${result.rows.length} results found`);
