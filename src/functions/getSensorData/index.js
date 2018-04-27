@@ -49,6 +49,7 @@ export default (event, context, callback) => {
   }
   pool.connect()
     .then((client) => {
+      console.log('Now execute the query from the client');
       let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
                   WHERE sensor_id = $1 ORDER BY created ASC`;
       console.log(query);
