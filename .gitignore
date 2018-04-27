@@ -60,3 +60,4 @@ typings/
 .serverless
 bin
 .env.yml
+.DS_Store

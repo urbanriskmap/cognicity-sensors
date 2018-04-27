@@ -28,6 +28,23 @@ provider:
 # TODO - rate limits
 # TODO - caching
 functions:
+  testQuery: # Lambda that tests query
+    timeout: ${file(./.env.yml):timeout}
+    environment:
+        PGHOST: ${file(./.env.yml):PGHOST}
+        PGDATABASE: ${file(./.env.yml):PGDATABASE}
+        PGPASSWORD: ${file(./.env.yml):PGPASSWORD}
+        PGPORT: ${file(./.env.yml):PGPORT}
+        PGSSL: ${file(./.env.yml):PGSSL}
+        PGTIMEOUT: ${file(./.env.yml):PGTIMEOUT}
+        PGUSER: ${file(./.env.yml):PGUSER}
+    handler: bin/functions/testQuery.default
+    events:
+        - http:
+            cors: true
+            path: testing
+            method: GET
+            integration: lambda
   getSensors: # Lambda that gets sensors
     timeout: ${file(./.env.yml):timeout}
     environment:
@@ -129,3 +146,4 @@ functions:
           parameters:
             paths:
               id: true
+

@@ -47,26 +47,20 @@ export default (event, context, callback) => {
   if (sensorId.error) {
     return _raiseClientError(400, sensorId.error.message, callback);
   }
-  pool.connect()
-    .then((client) => {
-      console.log('Now execute the query from the client');
-      let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
-                  WHERE sensor_id = $1 ORDER BY created ASC`;
-      console.log(query);
-      console.log(sensorId);
-      const id = sensorId.value.id;
-      // Query
-      client.query(query, [id])
-        .then((result) => {
-          client.release(); // !Important - release the client to the pool
-          console.log(`${result.rows.length} results found`);
-            // Return result
-            return _successResponse(200, result.rows, callback);
-        })
-        .catch((err) => {
-          console.log(err.message);
-          client.release(); // !Important - release the client to the pool
-          return _raiseClientError(500, JSON.stringify(err.message), callback);
-        });
+
+  let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
+  WHERE sensor_id = $1 ORDER BY created ASC`;
+
+  console.log(query);
+  console.log(sensorId.value);
+  const id = sensorId.value.id;
+
+  pool.query(query, [id])
+    .then((result) => {
+      console.log(`${result.rows.length} results found`);
+      return _successResponse(200, result.rows, callback);
+    }).catch((err) => {
+      console.log(err.message);
+      return _raiseClientError(500, JSON.stringify(err.message), callback);
     });
 };
