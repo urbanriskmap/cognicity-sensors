@@ -53,12 +53,13 @@ export default (event, context, callback) => {
 
   const id = sensorId.value.id;
 
-  pool.query(query, [id])
-    .then((result) => {
+  pool.query(query, [id], (err, res) => {
+    if (err) {
+      console.log(err);
+      return _raiseClientError(500, JSON.stringify(err.message), callback);
+    } else {
       console.log(`${result.rows.length} results found`);
       return _successResponse(200, result.rows, callback);
-    }).catch((err) => {
-      console.log(err.message);
-      return _raiseClientError(500, JSON.stringify(err.message), callback);
-    });
+    }
+  });
 };
