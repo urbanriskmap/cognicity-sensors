@@ -56,10 +56,11 @@ export default (event, context, callback) => {
   pool.query(query, [id], (err, res) => {
     if (err) {
       console.log(err);
-      return _raiseClientError(500, JSON.stringify(err.message), callback);
+      //return _raiseClientError(500, JSON.stringify(err.message), callback);
     } else {
       console.log(`${result.rows.length} results found`);
-      return _successResponse(200, result.rows, callback);
+      callback(null, 200, result.rows);
+      //return _successResponse(200, result.rows, callback);
     }
   });
 };
