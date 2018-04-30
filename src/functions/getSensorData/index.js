@@ -41,7 +41,7 @@ const _pathSchema = Joi.object().keys({
  */
 export default (event, context, callback) => {
   // Don't wait to exit loop
-  context.callbackWaitsForEmptyEventLoop = false;
+  context.callbackWaitsForEmptyEventLoop = true;
   // validate sensor/:id
   let sensorId = Joi.validate(event.path, _pathSchema);
   if (sensorId.error) {
@@ -51,8 +51,6 @@ export default (event, context, callback) => {
   let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
   WHERE sensor_id = $1 ORDER BY created ASC`;
 
-  console.log(query);
-  console.log(sensorId.value);
   const id = sensorId.value.id;
 
   pool.query(query, [id])
