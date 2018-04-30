@@ -6,7 +6,7 @@ import config from '../../config';
 const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
 
 // Create a pool object
-const pool = new Pool({connectionString: cn});
+const pool = new Pool({connectionString: cn, idleTimeoutMillis: 10000});
 pool.CREATED = Date.now(); // Smash this into the pool object
 
 // Catch database errors
