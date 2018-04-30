@@ -6,7 +6,7 @@ import config from '../../config';
 const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
 
 // Create a pool object
-const pool = new Pool({connectionString: cn, idleTimeoutMillis:10});
+const pool = new Pool({connectionString: cn});
 
 // Catch database errors
 // TODO pass this back to Lambda
@@ -24,7 +24,7 @@ pool.on('error', (err, client) => {
  */
 export default (event, context, callback) => {
   // Don't wait to exit loop
-  context.callbackWaitsForEmptyEventLoop = true;
+  //context.callbackWaitsForEmptyEventLoop = true;
 
   const query = {
     // give the query a unique name

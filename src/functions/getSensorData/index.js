@@ -43,17 +43,17 @@ export default (event, context, callback) => {
   // Don't wait to exit loop
   //context.callbackWaitsForEmptyEventLoop = true;
   // validate sensor/:id
-  let sensorId = Joi.validate(event.path, _pathSchema);
-  if (sensorId.error) {
-    return _raiseClientError(400, sensorId.error.message, callback);
-  }
+  //let sensorId = Joi.validate(event.path, _pathSchema);
+  //if (sensorId.error) {
+  //  return _raiseClientError(400, sensorId.error.message, callback);
+  //}
 
-  let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
+  /*let query = `SELECT * FROM ${config.TABLE_SENSOR_DATA}
   WHERE sensor_id = $1 ORDER BY created ASC`;
 
-  const id = sensorId.value.id;
+  const id = sensorId.value.id;*/
 
-  pool.query(query, [id], (err, res) => {
+  /*pool.query(query, [id], (err, res) => {
     if (err) {
       console.log(err);
       //return _raiseClientError(500, JSON.stringify(err.message), callback);
@@ -62,5 +62,14 @@ export default (event, context, callback) => {
       callback(null, 200, result.rows);
       //return _successResponse(200, result.rows, callback);
     }
+  });*/
+
+  pool.query('SELECT now()', (err, res) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log('Pool: ', pool.guid);
+    console.log('time:', res.rows[0]);
+    callback(null, 200, result.rows);
   });
 };
