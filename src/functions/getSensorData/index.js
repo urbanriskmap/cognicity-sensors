@@ -41,7 +41,7 @@ const _pathSchema = Joi.object().keys({
  */
 export default (event, context, callback) => {
   // Don't wait to exit loop
-  context.callbackWaitsForEmptyEventLoop = true;
+  //context.callbackWaitsForEmptyEventLoop = true;
   // validate sensor/:id
   let sensorId = Joi.validate(event.path, _pathSchema);
   if (sensorId.error) {
