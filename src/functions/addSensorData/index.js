@@ -1,7 +1,7 @@
 import {Pool} from 'pg'; // Postgres
 import Joi from 'joi'; // validation
-import addSensorData from './model';
 import config from '../../config';
+import SensorData from '../../lib/SensorData';
 
 // Connection object
 const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
@@ -10,25 +10,9 @@ const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${
 const pool = new Pool({connectionString: cn});
 pool.CREATED = Date.now(); // Smash this into the pool object
 
-// Catch database errors
-// TODO pass this back to Lambda
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
-});
-
-// Return an error in Lambda format
-const _raiseClientError = (code, err, callback) => callback(null, {
-  statusCode: code,
-  body: err,
-});
-
-const _successResponse = (code, body, callback) => callback(null, {
-  statusCode: code,
-  body: body,
-});
-
+// Validation schemas
 const _bodySchema = Joi.object().keys({
-  properties: Joi.object().min(1).required(),
+  properties: Joi.object().required(),
 });
 
 const _pathSchema = Joi.object().keys({
@@ -36,40 +20,50 @@ const _pathSchema = Joi.object().keys({
 });
 
 /**
- * Endpoint for sensor objects
+ * Endpoint for new sensor objects
  * @function sensors
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
- * @return {Object} response - Response passed to callback
  */
 export default (event, context, callback) => {
-  // Don't wait to exit loop
-  context.callbackWaitsForEmptyEventLoop = false;
+  // Catch database errors
+  pool.on('error', (err, client) => {
+    console.error('Unexpected error on idle client', err);
+  });
 
-  let sensorId = null;
-  const requestBody = event.body;
-
-  // validate sensor/:id
-  sensorId = Joi.validate(event.path, _pathSchema);
-  if (sensorId.error) {
-    return _raiseClientError(400, sensorId.error.message, callback);
-  }
-
-  let result = Joi.validate(requestBody, _bodySchema);
-    if (result.error) {
-      return _raiseClientError(400, result.error.message, callback);
+  // Validate parameters
+  Joi.validate(event.pathParameters, _pathSchema, function(err, result) {
+    if (err) {
+      callback(null,
+        {
+          statusCode: 400,
+          body: err.message,
+        });
     }
+  });
 
-  console.log(event);
-  console.log(event.path);
+  Joi.validate(event.body, _bodySchema, function(err, result) {
+    if (err) {
+      callback(null,
+      {
+        statusCode: 400,
+        body: err.message,
+      });
+    }
+  });
 
-  addSensorData(config, pool).postData(sensorId.value.id,
-    requestBody.properties)
-    .then((data) => {
-      return _successResponse(200, data, callback);
-    })
-    .catch((err) => {
-      return _raiseClientError(500, JSON.stringify(err), callback);
+  // Properties
+  const id = event.pathParameters.id;
+  const properties = event.body;
+
+  const sensorData = new SensorData(config, pool);
+
+  // Query
+  sensorData.insert(id, properties)
+    .then((result) => {
+      callback(null, {statusCode: 200, body: JSON.stringify(result.rows)});
+    }).catch((err) => {
+      callback(null, {statusCode: 500, body: JSON.stringify(err.message)});
     });
 };

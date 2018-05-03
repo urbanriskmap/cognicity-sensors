@@ -15,7 +15,7 @@ const pool = new Pool({
   });
 
 // Validation schema
-const _paramSchema = Joi.object().keys({
+const _pathSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
 });
 
@@ -33,18 +33,15 @@ export default (event, context, callback) => {
   });
 
   // Validate parameters
-  Joi.validate(event.queryParameters, _paramSchema, function(err, result) {
+  Joi.validate(event.pathParameters, _pathSchema, function(err, result) {
     if (err) {
       callback(null,
         {
-          statusCode: 500,
+          statusCode: 400,
           body: JSON.stringify(err.message),
         });
     }
   });
-
-  console.log(event);
-  console.log(event.pathParameters);
 
   // Sensor ID
   const id = event.pathParameters.id;

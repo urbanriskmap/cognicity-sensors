@@ -33,7 +33,7 @@ export default function(config) {
       });
     });
     it('Catches invalid resource path', function(done) {
-      let event = {path: {id: 0}};
+      let event = {pathParameters: {id: 0}};
       let context = {};
       event.body = JSON.stringify({properties: {a: 1}});
       addSensorData(event, context, function(err, response) {
