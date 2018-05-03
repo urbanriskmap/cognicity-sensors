@@ -16,6 +16,7 @@ export default {
   PGSSL: process.env.PGSSL === 'true' || false,
   PGTIMEOUT: process.env.PGTIMEOUT || 10000,
   PGUSER: process.env.PGUSER || 'postgres',
+  PG_CLIENT_IDLE_TIMEOUT: process.env.PG_CLIENT_IDLE_TIMEOUT || 100,
   GEO_COLUMN: process.env.GEO_COLUMN || 'the_geom',
   GEO_EXTENTS_DEFAULT: (process.env.GEO_EXTENTS_DEFAULT || '-180,-90,180,90'), // Coords passed as csv string.
   GEO_FORMAT_DEFAULT: process.env.GEO_FORMAT_DEFAULT || 'geojson',
