@@ -31,7 +31,6 @@ const _paramSchema = Joi.object().keys({
  */
 export default (event, context, callback) => {
   // Catch database errors
-  // TODO pass this back to Lambda
   pool.on('error', (err, client) => {
     console.error('Unexpected error on idle client', err);
   });
@@ -48,6 +47,7 @@ export default (event, context, callback) => {
     }
   });
 
+  // Set defaults for optional query params
   const properties = {
     bbox: !!event.queryStringParameters.bbox ||
       config.GEO_EXTENTS_DEFAULT,
@@ -58,7 +58,7 @@ export default (event, context, callback) => {
   // Sensor class
   const sensor = new Sensors(config, pool);
 
-  // Call database model
+  // Call database
   sensor.all(properties)
     .then((data) => {
       console.log('Retrieved sensor data');
