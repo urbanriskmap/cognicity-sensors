@@ -54,4 +54,23 @@ export default class SensorData {
         .catch((err) => reject(err));
     });
   }
+
+    /**
+   * Deletes sensor data from database
+   * @method delete
+   * @param {Number} id - Sensor identifier
+   * @param {Number} dataId - Data record identifier
+   * @return {Promise} - Response from database
+   */
+  delete(id, dataId) {
+    // Query string
+    const query = `DELETE FROM ${this.config.TABLE_SENSOR_DATA}
+    WHERE sensor_id = $1 AND id = $2`;
+
+    return new Promise((resolve, reject) => {
+      this.pool.query(query, [id, dataId])
+        .then((response) => resolve(response))
+        .catch((err) => reject(err));
+    });
+  }
 }
