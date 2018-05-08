@@ -53,8 +53,10 @@ export default (event, context, callback) => {
   // Query
   sensorData.get(id)
     .then((result) => {
+      console.log('Retrieved sensor data');
       callback(null, {statusCode: 200, body: JSON.stringify(result.rows)});
     }).catch((err) => {
+      console.log('Error retrieving sensor data: ' + err.message);
       callback(null, {statusCode: 500, body: JSON.stringify(err.message)});
     });
 };

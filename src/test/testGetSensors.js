@@ -10,8 +10,8 @@ export default function(config) {
   describe('Get Sensors Handler Testing', function() {
     it('Rejects bad bbox query parameter', function(done) {
       let event = {};
+      event.queryStringParameters = {geoformat: 'geojson', bbox: [1, 2, 3, 91]};
       let context = {};
-      event.query = {bounds: '1,2,3'};
       getSensors(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)

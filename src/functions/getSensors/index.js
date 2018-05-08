@@ -1,38 +1,23 @@
 import {Pool} from 'pg'; // Postgres
-import getSensors from './model';
 import Joi from 'joi'; // validation
+
+// Local objects
 import config from '../../config';
+import Sensors from '../../lib/Sensors';
 
 // Connection object
 const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
 
 // Create a pool object
-const pool = new Pool({connectionString: cn});
-pool.CREATED = Date.now(); // Smash this into the pool object
-
-// Catch database errors
-// TODO pass this back to Lambda
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle client', err);
+const pool = new Pool({
+  connectionString: cn,
+  idleTimeoutMillis: config.PG_CLIENT_IDLE_TIMEOUT,
 });
-
-// Return an error in Lambda format
-const _raiseClientError = (code, err, callback) => callback(null, {
-  statusCode: code,
-  body: err,
-});
-
-const _successResponse = (code, body, callback) => callback(null, {
-  statusCode: code,
-  body: body,
-});
-
-const _bboxSchema = Joi.array().length(4).items(Joi.number().min(-180).max(180),
-    Joi.number().min(-90).max(90), Joi.number().min(-180).max(180),
-    Joi.number().min(-90).max(90));
 
 const _paramSchema = Joi.object().keys({
-  bbox: Joi.string().min(7).max(17).default(config.GEO_EXTENTS_DEFAULT),
+  bbox: Joi.array().length(4).items(Joi.number().min(-180).max(180),
+  Joi.number().min(-90).max(90), Joi.number().min(-180).max(180),
+  Joi.number().min(-90).max(90)).default(config.GEO_EXTENTS_DEFAULT),
   geoformat: Joi.string().default(config.GEO_FORMAT_DEFAULT)
     .valid(config.GEO_FORMATS),
 });
@@ -43,30 +28,44 @@ const _paramSchema = Joi.object().keys({
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
- * @return {Object} response - Response passed to callback
  */
 export default (event, context, callback) => {
-  // Don't wait to exit loop
-  context.callbackWaitsForEmptyEventLoop = false;
+  // Catch database errors
+  // TODO pass this back to Lambda
+  pool.on('error', (err, client) => {
+    console.error('Unexpected error on idle client', err);
+  });
 
   // Validate URL params
-  let params = Joi.validate(event.query, _paramSchema);
-  if (params.error) {
-    return _raiseClientError(400, params.error.message, callback);
-  }
+  Joi.validate(event.queryStringParameters, _paramSchema,
+    function(err, result) {
+    if (err) {
+      console.log(err);
+      callback( null, {
+        statusCode: 400,
+        body: JSON.stringify(err.message),
+      });
+    }
+  });
 
-  // Parse bbox string and validate coordinates
-  let bbox = Joi.validate(params.value.bbox.split(','), _bboxSchema);
-  if (bbox.error) {
-    return _raiseClientError(400, bbox.error.message, callback);
-  }
+  const properties = {
+    bbox: !!event.queryStringParameters.bbox ||
+      config.GEO_EXTENTS_DEFAULT,
+    geoformat: !!event.queryStringParameters.geoformat ||
+      config.GEO_FORMAT_DEFAULT,
+  };
+
+  // Sensor class
+  const sensor = new Sensors(config, pool);
 
   // Call database model
-  getSensors(config, pool).getData(bbox.value, params.value.geoformat)
+  sensor.all(properties)
     .then((data) => {
-      return _successResponse(200, data, callback);
+      console.log('Retrieved sensor data');
+      callback(null, {statusCode: 200, body: JSON.stringify(data)});
     })
     .catch((err) => {
-      return _raiseClientError(500, JSON.stringify(err), callback);
+      console.log('Error retrieving sensor data: ' + err.message);
+      callback(null, {statusCode: 500, body: JSON.stringify(err.message)});
     });
 };

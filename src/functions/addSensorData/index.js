@@ -64,8 +64,10 @@ export default (event, context, callback) => {
   // Query
   sensorData.insert(id, properties)
     .then((result) => {
+      console.log('Data inserted: ' + JSON.stringify(result.rows));
       callback(null, {statusCode: 200, body: JSON.stringify(result.rows)});
     }).catch((err) => {
+      console.log('Error inserting data: ' + err.message);
       callback(null, {statusCode: 500, body: JSON.stringify(err.message)});
     });
 };

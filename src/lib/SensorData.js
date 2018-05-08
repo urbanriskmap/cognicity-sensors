@@ -25,7 +25,7 @@ export default class SensorData {
   get(id) {
     // Query string
     const query = `SELECT * FROM ${this.config.TABLE_SENSOR_DATA}
-    WHERE sensor_id = $1 ORDER BY created ASC;`;
+    WHERE sensor_id = $1 ORDER BY created ASC LIMIT 1;`;
 
     return new Promise((resolve, reject) => {
       this.pool.query(query, [id])
