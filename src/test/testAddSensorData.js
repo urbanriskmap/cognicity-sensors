@@ -15,7 +15,7 @@ export default function(config) {
       addSensorData(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
-          .is(`"value" must be an object`);
+          .is(JSON.stringify(`"value" must be an object`));
         done();
       });
     });
@@ -27,8 +27,8 @@ export default function(config) {
       addSensorData(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
-          .is(`child "properties" fails because ` +
-              `["properties" must be an object]`);
+          .is(JSON.stringify(`child "properties" fails because ` +
+              `["properties" must be an object]`));
         done();
       });
     });
@@ -39,8 +39,8 @@ export default function(config) {
       addSensorData(event, context, function(err, response) {
         test.value(response.statusCode).is(400);
         test.value(response.body)
-          .is(`child "id" fails because ` +
-              `["id" must be larger than or equal to 1]`);
+          .is(JSON.stringify(`child "id" fails because ` +
+              `["id" must be larger than or equal to 1]`));
         done();
       });
     });
