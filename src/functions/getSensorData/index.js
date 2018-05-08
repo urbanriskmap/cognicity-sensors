@@ -35,6 +35,7 @@ export default (event, context, callback) => {
   // Validate parameters
   Joi.validate(event.pathParameters, _pathSchema, function(err, result) {
     if (err) {
+      console.log(err);
       callback(null,
         {
           statusCode: 400,

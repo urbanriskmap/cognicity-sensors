@@ -7,8 +7,10 @@ import SensorData from '../../lib/SensorData';
 const cn = `postgres://${config.PGUSER}:${config.PGPASSWORD}@${config.PGHOST}:${config.PGPORT}/${config.PGDATABASE}?ssl=${config.PGSSL}`;
 
 // Create a pool object
-const pool = new Pool({connectionString: cn});
-pool.CREATED = Date.now(); // Smash this into the pool object
+const pool = new Pool({
+  connectionString: cn,
+  idleTimeoutMillis: config.PG_CLIENT_IDLE_TIMEOUT,
+});
 
 // Validation schemas
 const _bodySchema = Joi.object().keys({
@@ -38,7 +40,7 @@ export default (event, context, callback) => {
       callback(null,
         {
           statusCode: 400,
-          body: err.message,
+          body: JSON.stringify(err.message),
         });
     }
   });
@@ -48,7 +50,7 @@ export default (event, context, callback) => {
       callback(null,
       {
         statusCode: 400,
-        body: err.message,
+        body: JSON.stringify(err.message),
       });
     }
   });
