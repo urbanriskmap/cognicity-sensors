@@ -56,13 +56,13 @@ export default class Sensors {
     /**
      * Inserts new Sensors into database
      * @method insert
+     * @param {Object} properties - Sensor metadata
      * @param {Object} location - Sensor location
      * @param {Number} location.lat - Latitude
      * @param {Numver} location.lng - Longitude
-     * @param {Object} properties - Sensor metadata
      * @return {Promise} - Response from database
      */
-    insert(location, properties) {
+    insert(properties, location) {
       // Query string
       const query = `INSERT INTO ${this.config.TABLE_SENSOR_METADATA}
       (properties, ${this.config.GEO_COLUMN})
@@ -70,7 +70,7 @@ export default class Sensors {
       RETURNING id, created, properties, the_geom`;
 
       return new Promise((resolve, reject) => {
-        this.pool.query(query, [location, properties])
+        this.pool.query(query, [properties, location.lng, location.lat])
           .then((response) => resolve(response))
           .catch((err) => reject(err));
       });

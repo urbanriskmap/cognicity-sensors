@@ -15,7 +15,7 @@ const pool = new Pool({
 });
 
 const _schema = Joi.object().keys({
-  properties: Joi.object().min(1).required(),
+  properties: Joi.object().required(),
   location: Joi.object().required().keys({
     lat: Joi.number().min(-90).max(90).required(),
     lng: Joi.number().min(-180).max(180).required(),
@@ -35,8 +35,10 @@ export default (event, context, callback) => {
     console.error('Unexpected error on idle client', err);
   });
 
+  const body = JSON.parse(event.body);
+
   // Validate URL params
-  Joi.validate(event.body, _schema,
+  Joi.validate(body, _schema,
     function(err, result) {
     if (err) {
       console.log(err);
@@ -51,7 +53,7 @@ export default (event, context, callback) => {
     const sensor = new Sensors(config, pool);
 
     // Call database
-    sensor.insert(event.body.properties, event.body.location)
+    sensor.insert(body.properties, body.location)
     .then((result) => {
       console.log('Added sensor');
       callback(null, {statusCode: 200, body: JSON.stringify(result.rows)});
