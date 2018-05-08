@@ -22,7 +22,7 @@ export default class Sensors {
      * Gets all sensors from database
      * @method all
      * @param {Object} properties - Query parameters
-     * @param {Object} properties.bounds - Bounding box (xmin, ymin, xmax, ymax)
+     * @param {Object} properties.bbox - Bounding box (xmin, ymin, xmax, ymax)
      * @param {Object} properties.geoformat - Output geoformat
      * @return {Promise} - Response from database
      */
@@ -40,7 +40,7 @@ export default class Sensors {
         $4, ${this.config.GEO_SRID}))`;
 
       return new Promise((resolve, reject) => {
-        this.pool.query(query, [properties.bounds])
+        this.pool.query(query, properties.bbox)
           .then((result) => {
             dbgeo.parse(result.rows, params, (err, parsed) => {
               if (err) {

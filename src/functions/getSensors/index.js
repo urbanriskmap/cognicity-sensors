@@ -30,13 +30,27 @@ const _paramSchema = Joi.object().keys({
  * @param {Object} callback - Callback (HTTP response)
  */
 export default (event, context, callback) => {
+
+  console.log(JSON.stringify(event.queryStringParameters));
   // Catch database errors
   pool.on('error', (err, client) => {
     console.error('Unexpected error on idle client', err);
   });
 
+  // Set defaults for optional query params
+  const properties = {
+    bbox: (!!event.queryStringParameters &&
+      !!event.queryStringParameters.bbox &&
+      event.queryStringParameters.bbox ||
+      config.GEO_EXTENTS_DEFAULT).split(','),
+    geoformat: !!event.queryStringParameters &&
+      !!event.queryStringParameters.geoformat &&
+      event.queryStringParameters.geoformat ||
+      config.GEO_FORMAT_DEFAULT,
+  };
+
   // Validate URL params
-  Joi.validate(event.queryStringParameters, _paramSchema,
+  Joi.validate(properties, _paramSchema,
     function(err, result) {
     if (err) {
       console.log(err);
@@ -46,14 +60,6 @@ export default (event, context, callback) => {
       });
     }
   });
-
-  // Set defaults for optional query params
-  const properties = {
-    bbox: !!event.queryStringParameters.bbox ||
-      config.GEO_EXTENTS_DEFAULT,
-    geoformat: !!event.queryStringParameters.geoformat ||
-      config.GEO_FORMAT_DEFAULT,
-  };
 
   // Sensor class
   const sensor = new Sensors(config, pool);
