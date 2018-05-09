@@ -11,11 +11,11 @@ export default function() {
     describe('Sensor class testing', function() {
         // globals
         const sensor = new Sensors(config, {});
-        
+
         // overload dbgeo library
         sensor.dbgeo = {};
 
-        // set error toggles  
+        // set error toggles
         let queryError = false;
         let parseError = false;
 
@@ -28,7 +28,7 @@ export default function() {
                         reject(new Error('query error'));
                     }
                 });
-            }
+            };
             sensor.pool.query = mockQuery;
 
             const mockParse = function(data, params, callback) {
@@ -37,10 +37,10 @@ export default function() {
                 } else {
                     callback(new Error('parse error'), {});
                 }
-            }
+            };
             sensor.dbgeo.parse = mockParse;
         });
-    
+
         it('Can create a class instance', function() {
             test.value(sensor instanceof Sensors).is(true);
         });

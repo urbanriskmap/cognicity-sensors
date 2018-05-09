@@ -11,8 +11,8 @@ export default function() {
     describe('Sensor class testing', function() {
         // globals
         const sensorData = new SensorData(config, {});
-        
-        // set error toggles  
+
+        // set error toggles
         let queryError = false;
 
         before(function() {
@@ -24,10 +24,10 @@ export default function() {
                         reject(new Error('query error'));
                     }
                 });
-            }
+            };
             sensorData.pool.query = mockQuery;
         });
-    
+
         it('Can create a class instance', function() {
             test.value(sensorData instanceof SensorData).is(true);
         });
@@ -88,7 +88,6 @@ export default function() {
                     done();
                 });
         });
-
     });
 }
 

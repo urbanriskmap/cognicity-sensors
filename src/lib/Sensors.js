@@ -16,6 +16,7 @@ export default class Sensors {
     constructor(config, pool) {
       this.config = config;
       this.pool = pool;
+      this.dbgeo = dbgeo;
     }
 
     /**
@@ -42,7 +43,7 @@ export default class Sensors {
       return new Promise((resolve, reject) => {
         this.pool.query(query, properties.bbox)
           .then((result) => {
-            dbgeo.parse(result.rows, params, (err, parsed) => {
+            this.dbgeo.parse(result.rows, params, (err, parsed) => {
               if (err) {
                 reject(err);
               }

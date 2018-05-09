@@ -30,7 +30,6 @@ const _paramSchema = Joi.object().keys({
  * @param {Object} callback - Callback (HTTP response)
  */
 export default (event, context, callback) => {
-
   console.log(JSON.stringify(event.queryStringParameters));
   // Catch database errors
   pool.on('error', (err, client) => {
