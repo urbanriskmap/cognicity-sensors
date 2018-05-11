@@ -46,7 +46,7 @@ export default class SensorData {
     const query = `INSERT INTO ${this.config.TABLE_SENSOR_DATA}
     (sensor_id, properties)
     VALUES ($1, $2::json)
-    RETURNING sensor_id, id as data_id, created`;
+    RETURNING sensor_id as id, id as "dataId", created`;
 
     return new Promise((resolve, reject) => {
       this.pool.query(query, [id, properties])

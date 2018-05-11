@@ -21,6 +21,12 @@ const _pathSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
 });
 
+// These headers are consistent for all responses
+const headers = {
+  'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+  'Access-Control-Allow-Credentials': true, // Cookies, HTTPS auth headers
+};
+
 /**
  * Endpoint for new sensor objects
  * @function sensors
@@ -40,7 +46,11 @@ export default (event, context, callback) => {
       callback(null,
         {
           statusCode: 400,
-          body: JSON.stringify(err.message),
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 400,
+            result: err.message,
+          }),
         });
     }
   });
@@ -48,10 +58,14 @@ export default (event, context, callback) => {
   Joi.validate(event.body, _bodySchema, function(err, result) {
     if (err) {
       callback(null,
-      {
-        statusCode: 400,
-        body: JSON.stringify(err.message),
-      });
+        {
+          statusCode: 400,
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 400,
+            result: err.message,
+          }),
+        });
     }
   });
 
@@ -63,11 +77,27 @@ export default (event, context, callback) => {
 
   // Query
   sensorData.insert(id, properties)
-    .then((result) => {
-      console.log('Data inserted: ' + JSON.stringify(result.rows));
-      callback(null, {statusCode: 200, body: JSON.stringify(result.rows)});
+    .then((data) => {
+      console.log('New sensor data inserted');
+      console.log('Response: ' + JSON.stringify(data.rows[0]));
+      callback(null,
+        {
+          statusCode: 200,
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 200,
+            result: data.rows[0],
+          }),
+        });
     }).catch((err) => {
       console.log('Error inserting data: ' + err.message);
-      callback(null, {statusCode: 500, body: JSON.stringify(err.message)});
+      callback(null,
+        {
+          statusCode: 500,
+          body: JSON.stringify({
+            statusCode: 500,
+            result: err.message,
+          }),
+      });
     });
 };

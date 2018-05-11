@@ -19,6 +19,12 @@ const _pathSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
 });
 
+// These headers are consistent for all responses
+const headers = {
+  'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+  'Access-Control-Allow-Credentials': true, // Cookies, HTTPS auth headers
+};
+
 /**
  * Endpoint for sensor objects
  * @function sensors
@@ -39,7 +45,11 @@ export default (event, context, callback) => {
       callback(null,
         {
           statusCode: 400,
-          body: JSON.stringify(err.message),
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 400,
+            result: err.message,
+          }),
         });
     }
   });
@@ -52,12 +62,28 @@ export default (event, context, callback) => {
 
   // Query
   sensorData.get(id)
-    .then((result) => {
+    .then((data) => {
       console.log('Retrieved sensor data');
-      callback(null, {statusCode: 200, body: JSON.stringify(result.rows)});
+      console.log('Sensot id: ' + id);
+      callback(null,
+        {
+          statusCode: 200,
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 200,
+            result: data.rows, // TODO - should this be an object or array?
+          }),
+        });
     }).catch((err) => {
       console.log('Error retrieving sensor data: ' + err.message);
-      callback(null, {statusCode: 500, body: JSON.stringify(err.message)});
+      callback(null,
+        {
+          statusCode: 500,
+          body: JSON.stringify({
+            statusCode: 500,
+            result: err.message,
+          }),
+      });
     });
 };
 

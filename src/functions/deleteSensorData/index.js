@@ -14,10 +14,17 @@ const pool = new Pool({
   idleTimeoutMillis: config.PG_CLIENT_IDLE_TIMEOUT,
 });
 
+// Validation schema
 const _propertiesSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
   dataId: Joi.number().min(1).required(),
 });
+
+// These headers are consistent for all responses
+const headers = {
+  'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+  'Access-Control-Allow-Credentials': true, // Cookies, HTTPS auth headers
+};
 
 /**
  * Endpoint for sensor objects
@@ -39,32 +46,40 @@ export default (event, context, callback) => {
       callback(null,
         {
           statusCode: 400,
-          body: JSON.stringify(err.message),
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 400,
+            result: err.message,
+          }),
         });
     }
   });
 
+  // Sensor data class
   const sensorData = new SensorData(config, pool);
 
-  console.log(JSON.stringify(event.pathParameters));
-  callback(
-    null,
-    {
-      statusCode: 200,
-      body: JSON.stringify(),
-    }
-  );
   sensorData.delete(event.pathParameters.id, event.pathParameters.dataId)
     .then((data) => {
-      callback(null, {
-        statusCode: 200,
-        body: data,
-      });
+      console.log('Sensor data deleted');
+      console.log('Query parameters: ' + JSON.stringify(event.pathParameters));
+      callback(null,
+        {
+          statusCode: 200,
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 200,
+            result: {},
+          }),
+        });
     })
     .catch((err) => {
-      callback(null, {
-        statusCode: 500,
-        body: JSON.stringify(err.message),
+      callback(null,
+        {
+          statusCode: 500,
+          body: JSON.stringify({
+            statusCode: 500,
+            result: err.message,
+          }),
       });
     });
 };

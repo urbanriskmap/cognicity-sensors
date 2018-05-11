@@ -14,6 +14,7 @@ const pool = new Pool({
   idleTimeoutMillis: config.PG_CLIENT_IDLE_TIMEOUT,
 });
 
+// Validation schema
 const _paramSchema = Joi.object().keys({
   bbox: Joi.array().length(4).items(Joi.number().min(-180).max(180),
   Joi.number().min(-90).max(90), Joi.number().min(-180).max(180),
@@ -21,6 +22,12 @@ const _paramSchema = Joi.object().keys({
   geoformat: Joi.string().default(config.GEO_FORMAT_DEFAULT)
     .valid(config.GEO_FORMATS),
 });
+
+// These headers are consistent for all responses
+const headers = {
+  'Access-Control-Allow-Origin': '*', // Required for CORS support to work
+  'Access-Control-Allow-Credentials': true, // Cookies, HTTPS auth headers
+};
 
 /**
  * Endpoint for sensor objects
@@ -53,10 +60,15 @@ export default (event, context, callback) => {
     function(err, result) {
     if (err) {
       console.log(err);
-      callback( null, {
-        statusCode: 400,
-        body: JSON.stringify(err.message),
-      });
+      callback(null,
+        {
+          statusCode: 400,
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 400,
+            result: err.message,
+          }),
+        });
     }
   });
 
@@ -66,11 +78,27 @@ export default (event, context, callback) => {
   // Call database
   sensor.all(properties)
     .then((data) => {
+      console.log('Query properties: ' + JSON.stringify(properties));
       console.log('Retrieved sensor data');
-      callback(null, {statusCode: 200, body: JSON.stringify(data)});
+      callback(null,
+        {
+          statusCode: 200,
+          headers: headers,
+          body: JSON.stringify({
+            statusCode: 200,
+            result: data,
+          }),
+        });
     })
     .catch((err) => {
       console.log('Error retrieving sensor data: ' + err.message);
-      callback(null, {statusCode: 500, body: JSON.stringify(err.message)});
+      callback(null,
+        {
+          statusCode: 500,
+          body: JSON.stringify({
+            statusCode: 500,
+            result: err.message,
+          }),
+      });
     });
 };
