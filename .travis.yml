@@ -2,6 +2,20 @@ language: node_js
 
 node_js: '8.10'
 
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+      - postgresql-10-postgis-2.4
+      - proj-bin
+      - postgresql-10-postgis-2.4-scripts
+
+before_install:
+  - sudo cp /etc/postgresql/9.6/main/pg_hba.conf /etc/postgresql/10/main/pg_hba.conf
+  - sudo /etc/init.d/postgresql restart
+  - export PGPORT=5433
+  - export PGDATABASE=cognicity_server_testing ; git clone -b $BRANCH https://github.com/urbanriskmap/cognicity-schema.git urbanriskmap/cognicity-schema && cd urbanriskmap/cognicity-schema && bash build/run.sh && cd -
+
 install:
   - npm install
 
