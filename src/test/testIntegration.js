@@ -1,12 +1,12 @@
 import * as test from 'unit.js';
-
+import config from '../config';
+config.PGPORT = 1;
 // Locals
 import addSensor from '../functions/addSensor';
 import getSensors from '../functions/getSensors';
 import addSensorData from '../functions/addSensorData';
 import getSensorData from '../functions/getSensorData';
 import deleteSensorData from '../functions/deleteSensorData';
-import config from '../config';
 
 /**
  * Sensor class testing
