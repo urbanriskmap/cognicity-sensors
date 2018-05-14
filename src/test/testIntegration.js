@@ -5,8 +5,7 @@ import addSensor from '../functions/addSensor';
 import getSensors from '../functions/getSensors';
 import addSensorData from '../functions/addSensorData';
 import getSensorData from '../functions/getSensorData';
-// import deleteSensorData from '../functons/deleteSensorData';
-
+import deleteSensorData from '../functions/deleteSensorData';
 import config from '../config';
 
 /**
@@ -14,7 +13,8 @@ import config from '../config';
  */
 export default function() {
     describe('Sensor functions integration testing', function() {
-        it('Catches bad input', function(done) {
+        let DATAID = 1;
+        it('addSensor() - catches bad new sensor input', function(done) {
             addSensor({body: JSON.stringify({})}, {}, function(err, response) {
                 const body = JSON.parse(response.body);
                 test.value(err).is(null);
@@ -27,7 +27,7 @@ export default function() {
                 done();
             });
         });
-        it('Can add sensor', function(done) {
+        it('addSensor() - can add sensor', function(done) {
             const sensor = {
                 properties: {
                     name: 'test',
@@ -49,21 +49,119 @@ export default function() {
                 done();
             });
         });
-        it('Can add data to a sensor', function(done) {
+        it('addSensorData() - can add data to a sensor', function(done) {
             const data = {
                 properties: {
                     METAR: `CYYQ 182200Z 07002KT 15SM OVC017 06/03 A2966 RMK SC10 3 POLAR BEARS ALNG RNWY== `,
                 },
             };
-            addSensorData({body: JSON.stringify(data), pathParameters: JSON.stringify({id:1})}, {}, function(err, response) {
+            addSensorData({body: JSON.stringify(data), pathParameters: JSON.stringify({id: 1})}, {}, function(err, response) {
                 const body = JSON.parse(response.body);
-                console.log(body);
                 test.value(err).is(null);
                 test.value(response.headers).is({
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Credentials': true,
                 });
                 test.value(body.statusCode).is(200);
+                done();
+            });
+        });
+        it('addSensorData() - catches bad data input', function(done) {
+            const data = {
+                spam: {
+                    METAR: `CYYQ 182200Z 07002KT 15SM OVC017 06/03 A2966 RMK SC10 3 POLAR BEARS ALNG RNWY== `,
+                },
+            };
+            addSensorData({body: JSON.stringify(data), pathParameters: JSON.stringify({id: 1})}, {}, function(err, response) {
+                const body = JSON.parse(response.body);
+                test.value(err).is(null);
+                test.value(response.headers).is({
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                });
+                test.value(body.statusCode).is(400);
+                test.value(body.result.message).is('"properties" is required')
+                console.log(body);
+                done();
+            });
+        });
+        it('getSensorData() - can get sensor data', function(done) {
+            getSensorData({pathParameters: JSON.stringify({id: 1})}, {}, function(err, response) {
+                const body = JSON.parse(response.body);
+                test.value(err).is(null);
+                test.value(response.headers).is({
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                });
+                test.value(body.statusCode).is(200);
+                test.value(body.result[0].sensorId).is('1');
+                DATAID = body.result[0].dataId;
+                done();
+            });
+        });
+        it('getSensorData() - catches bad path parameter', function(done) {
+            getSensorData({pathParameters: JSON.stringify({id: 'spam'})}, {}, function(err, response) {
+                const body = JSON.parse(response.body);
+                test.value(err).is(null);
+                test.value(response.headers).is({
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                });
+                test.value(body.statusCode).is(400);
+                test.value(body.result.message).is('"id" must be a number')
+                done();
+            });
+        });
+        it('getSensors() - can get sensors with default params', function(done) {
+            getSensors({}, {}, function(err, response) {
+                const body = JSON.parse(response.body);
+                test.value(err).is(null);
+                test.value(response.headers).is({
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                });
+                test.value(body.statusCode).is(200);
+                done();
+            });
+        });
+        it('getSensors() - catches bad query parameters', function(done) {
+            getSensors({queryStringParameters:{bbox:'0,0,0'}}, {}, function(err, response) {
+                const body = JSON.parse(response.body);
+                test.value(err).is(null);
+                test.value(response.headers).is({
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                });
+                test.value(body.statusCode).is(400);
+                test.value(body.result.message).is('"bbox" must contain 4 items');
+                done();
+            });
+        });
+        it('deleteSensorData() - can delete sensor data', function(done) {
+            deleteSensorData({pathParameters:{id:1, dataId:DATAID}}, {}, function(err, response) {
+                const body = JSON.parse(response.body);
+                console.log(body)
+                test.value(err).is(null);
+                test.value(response.headers).is({
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                });
+                test.value(body.statusCode).is(200);
+                test.value(body.result).is({});
+                done();
+            });
+        });
+        it('deleteSensorData() - catches bad parameters', function(done) {
+            deleteSensorData({pathParameters:{id:-1, dataId:DATAID}}, {}, function(err, response) {
+                const body = JSON.parse(response.body);
+                console.log(body)
+                test.value(err).is(null);
+                test.value(response.headers).is({
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Credentials': true,
+                });
+                test.value(body.statusCode).is(400);
+                test.value(body.result).is({ message: '"id" must be larger than or equal to 1' });
                 done();
             });
         });

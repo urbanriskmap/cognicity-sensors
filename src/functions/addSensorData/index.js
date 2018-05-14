@@ -1,4 +1,4 @@
-import {Pool} from 'pg'; // Postgres
+import { Pool } from 'pg'; // Postgres
 import Joi from 'joi'; // validation
 
 // Local objects
@@ -37,6 +37,7 @@ export default async (event, context, callback) => {
   pool.on('error', (err, client) => {
     console.error('Unexpected error on idle client', err);
   });
+  
   // Validate inputs
   const properties = await Joi.validate(event.body, _bodySchema);
   const path = await Joi.validate(event.pathParameters, _pathSchema);
@@ -50,6 +51,7 @@ export default async (event, context, callback) => {
   handleResponse(callback, 200, result.rows[0]);
   }
 
+  // Handle errors
   catch (err) {
     if (err.isJoi) handleResponse(callback, 400,  {message: err.details[0].message} );
     else handleResponse(callback, 500, err.message);
