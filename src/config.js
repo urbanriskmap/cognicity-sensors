@@ -12,7 +12,7 @@ export default {
   PGHOST: process.env.PGHOST || '127.0.0.1',
   PGDATABASE: process.env.PGDATABASE || 'cognicity',
   PGPASSWORD: process.env.PGPASSWORD || 'password',
-  PGPORT: process.env.PGPORT || 5432,
+  PGPORT: process.env.PGPORT || 5433,
   PGSSL: process.env.PGSSL === 'true' || false,
   PGTIMEOUT: process.env.PGTIMEOUT || 10000,
   PGUSER: process.env.PGUSER || 'postgres',

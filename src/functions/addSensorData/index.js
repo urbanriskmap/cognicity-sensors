@@ -1,6 +1,9 @@
 import {Pool} from 'pg'; // Postgres
 import Joi from 'joi'; // validation
+
+// Local objects
 import config from '../../config';
+import { handleResponse } from '../../lib/util';
 import SensorData from '../../lib/SensorData';
 
 // Connection object
@@ -12,7 +15,7 @@ const pool = new Pool({
   idleTimeoutMillis: config.PG_CLIENT_IDLE_TIMEOUT,
 });
 
-// Validation schemas
+// Validation schema
 const _bodySchema = Joi.object().keys({
   properties: Joi.object().required(),
 });
@@ -21,12 +24,6 @@ const _pathSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
 });
 
-// These headers are consistent for all responses
-const headers = {
-  'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-  'Access-Control-Allow-Credentials': true, // Cookies, HTTPS auth headers
-};
-
 /**
  * Endpoint for new sensor objects
  * @function sensors
@@ -34,70 +31,27 @@ const headers = {
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
  */
-export default (event, context, callback) => {
+export default async (event, context, callback) => {
+  try {
   // Catch database errors
   pool.on('error', (err, client) => {
     console.error('Unexpected error on idle client', err);
   });
+  // Validate inputs
+  const properties = await Joi.validate(event.body, _bodySchema);
+  const path = await Joi.validate(event.pathParameters, _pathSchema);
 
-  // Validate parameters
-  Joi.validate(event.pathParameters, _pathSchema, function(err, result) {
-    if (err) {
-      callback(null,
-        {
-          statusCode: 400,
-          headers: headers,
-          body: JSON.stringify({
-            statusCode: 400,
-            result: err.message,
-          }),
-        });
-    }
-  });
-
-  Joi.validate(event.body, _bodySchema, function(err, result) {
-    if (err) {
-      callback(null,
-        {
-          statusCode: 400,
-          headers: headers,
-          body: JSON.stringify({
-            statusCode: 400,
-            result: err.message,
-          }),
-        });
-    }
-  });
-
-  // Properties
-  const id = event.pathParameters.id;
-  const properties = event.body;
-
+  // Sensor class
   const sensorData = new SensorData(config, pool);
 
-  // Query
-  sensorData.insert(id, properties)
-    .then((data) => {
-      console.log('New sensor data inserted');
-      console.log('Response: ' + JSON.stringify(data.rows[0]));
-      callback(null,
-        {
-          statusCode: 200,
-          headers: headers,
-          body: JSON.stringify({
-            statusCode: 200,
-            result: data.rows[0],
-          }),
-        });
-    }).catch((err) => {
-      console.log('Error inserting data: ' + err.message);
-      callback(null,
-        {
-          statusCode: 500,
-          body: JSON.stringify({
-            statusCode: 500,
-            result: err.message,
-          }),
-      });
-    });
+  // Add sensor data
+  const result = await sensorData.insert(path.id, properties);
+  console.log('Added sensor data');
+  handleResponse(callback, 200, result.rows[0]);
+  }
+
+  catch (err) {
+    if (err.isJoi) handleResponse(callback, 400,  {message: err.details[0].message} );
+    else handleResponse(callback, 500, err.message);
+  }
 };

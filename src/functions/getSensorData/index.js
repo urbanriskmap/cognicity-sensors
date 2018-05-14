@@ -3,6 +3,7 @@ import Joi from 'joi'; // validation
 
 // Local objects
 import config from '../../config';
+import {handleResponse} from '../../lib/util';
 import SensorData from '../../lib/SensorData';
 
 // Connection object
@@ -18,12 +19,6 @@ const pool = new Pool({
 const _pathSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
 });
-
-// These headers are consistent for all responses
-const headers = {
-  'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-  'Access-Control-Allow-Credentials': true, // Cookies, HTTPS auth headers
-};
 
 /**
  * Endpoint for sensor objects

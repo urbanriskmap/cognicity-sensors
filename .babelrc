@@ -1,4 +1,11 @@
 {
-  "presets": [ "env" ],
+  "presets": [
+    [ "env", {
+    "targets": {
+      "node": "8.10"
+    }
+  }] 
+],
   "plugins": [ "istanbul" ]
 }
+
