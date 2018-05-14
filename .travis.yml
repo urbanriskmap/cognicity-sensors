@@ -15,7 +15,7 @@ before_install:
   - sudo /etc/init.d/postgresql restart
   - export PGPORT=5433
   - if [[ $TRAVIS_BRANCH != 'master' ]]; then BRANCH='dev'; else BRANCH='master'; fi;
-  - export PGDATABASE=cognicity_server_testing ; git clone -b $BRANCH https://github.com/urbanriskmap/cognicity-schema.git && cd urbanriskmap/cognicity-schema && bash build/run.sh && cd -
+  - export PGDATABASE=cognicity_server_testing ; git clone -b $BRANCH https://github.com/urbanriskmap/cognicity-schema.git && cd cognicity-schema && bash build/run.sh && cd -
 
 install:
   - npm install
