@@ -1,9 +1,9 @@
-import { Pool } from 'pg'; // Postgres
+import {Pool} from 'pg'; // Postgres
 import Joi from 'joi'; // validation
 
 // Local objects
 import config from '../../config';
-import { handleResponse } from '../../lib/util';
+import {handleResponse} from '../../lib/util';
 import Sensors from '../../lib/Sensors';
 
 // Connection object
@@ -19,7 +19,7 @@ const pool = new Pool({
 const _propertiesSchema = Joi.object().keys({
   bbox: Joi.array().length(4).items(
     Joi.number().min(-180).max(180),
-    Joi.number().min(-90).max(90), 
+    Joi.number().min(-90).max(90),
     Joi.number().min(-180).max(180),
     Joi.number().min(-90).max(90)
   ).default(config.GEO_EXTENTS_DEFAULT),
@@ -63,11 +63,10 @@ export default async (event, context, callback) => {
     // Get sensor data, and return
     const result = await sensor.all(properties);
     handleResponse(callback, 200, result);
-  }
-
-  // Handle errors
-  catch (err) {
-    if (err.isJoi) handleResponse(callback, 400,  {message: err.details[0].message} );
-    else handleResponse(callback, 500, err.message);
+  } catch (err) {
+    if (err.isJoi) {
+handleResponse(callback, 400,
+      {message: err.details[0].message} );
+} else handleResponse(callback, 500, err.message);
   }
 };

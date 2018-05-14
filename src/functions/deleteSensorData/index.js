@@ -1,9 +1,9 @@
-import { Pool } from 'pg'; // Postgres
+import {Pool} from 'pg'; // Postgres
 import Joi from 'joi'; // validation
 
 // Local objects
 import config from '../../config';
-import { handleResponse } from '../../lib/util';
+import {handleResponse} from '../../lib/util';
 import SensorData from '../../lib/SensorData';
 
 
@@ -50,11 +50,10 @@ export default async (event, context, callback) => {
     } else {
       handleResponse(callback, 200, {});
     }
-  }
-
-  // Handle errors
-  catch (err) {
-    if (err.isJoi) handleResponse(callback, 400,  {message: err.details[0].message} );
-    else handleResponse(callback, 500, err.message);
+  } catch (err) {
+    if (err.isJoi) {
+handleResponse(callback, 400,
+      {message: err.details[0].message} );
+} else handleResponse(callback, 500, err.message);
   }
 };

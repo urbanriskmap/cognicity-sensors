@@ -24,7 +24,9 @@ export default class SensorData {
    */
   get(id) {
     // Query string
-    const query = `SELECT id as "dataId", sensor_id as "sensorId", created, properties  FROM ${this.config.TABLE_SENSOR_DATA}
+    const query = `SELECT id as "dataId", sensor_id as "sensorId", 
+    created, properties 
+    FROM ${this.config.TABLE_SENSOR_DATA}
     WHERE sensor_id = $1 ORDER BY created ASC LIMIT 1;`;
 
     return new Promise((resolve, reject) => {

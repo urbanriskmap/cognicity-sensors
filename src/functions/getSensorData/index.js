@@ -1,4 +1,4 @@
-import { Pool } from 'pg'; // Postgres
+import {Pool} from 'pg'; // Postgres
 import Joi from 'joi'; // validation
 
 // Local objects
@@ -35,7 +35,6 @@ export default async (event, context, callback) => {
     });
     // Params
     const params = await Joi.validate(event.pathParameters, _pathSchema);
-    
     // Sensor class
     const sensorData = new SensorData(config, pool);
 
@@ -43,15 +42,12 @@ export default async (event, context, callback) => {
     const result = await sensorData.get(params.id);
     console.log('Retrieved sensor data');
     handleResponse(callback, 200, result.rows);
-  }
-  // Handle errors
-  catch (err) {
+  } catch (err) {
     if (err.isJoi) {
-      handleResponse(callback, 400,  {message: err.details[0].message});
+      handleResponse(callback, 400, err.details[0].message);
       console.log('Validation error: ' + err.details[0].message);
     } else {
       handleResponse(callback, 500, err.message);
-      console.log('Error: ' + err.message);
     }
   }
 };

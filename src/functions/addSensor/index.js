@@ -1,9 +1,9 @@
-import { Pool } from 'pg'; // Postgres
+import {Pool} from 'pg'; // Postgres
 import Joi from 'joi'; // validation
 
 // Local objects
 import config from '../../config';
-import { handleResponse } from '../../lib/util';
+import {handleResponse} from '../../lib/util';
 import Sensors from '../../lib/Sensors';
 
 // Connection object
@@ -37,10 +37,10 @@ export default async (event, context, callback) => {
     pool.on('error', (err, client) => {
       console.error('Unexpected error on idle client', err);
     });
-    
+
     // Validate params
     const params = await Joi.validate(event.body, _schema);
-    
+
     // Sensor class
     const sensor = new Sensors(config, pool);
 
@@ -48,12 +48,9 @@ export default async (event, context, callback) => {
     const result = await sensor.insert(params.properties, params.location);
     handleResponse(callback, 200, result.rows[0]);
     console.log('Added sensor');
-  }
-
-  // Handle errors
-  catch (err) {
+  } catch (err) {
     if (err.isJoi) {
-      handleResponse(callback, 400,  {message: err.details[0].message});
+      handleResponse(callback, 400, err.details[0].message);
       console.log('Validation error: ' + err.details[0].message);
     } else {
       handleResponse(callback, 500, err.message);
