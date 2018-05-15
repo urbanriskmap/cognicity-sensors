@@ -4,7 +4,7 @@ node_js: '8.10'
 
 branches:
   only:
-    - travis-deploy
+    - dev
 
 addons:
   postgresql: "10"
@@ -40,7 +40,7 @@ deploy:
   module_name: "bin/functions/addSensor"
   handler_name: "default"
   on:
-    branch: travis-deploy 
+    branch: dev
 
 - provider: lambda
   function_name: "cognicity-sensors-add-data-dev"
@@ -50,7 +50,7 @@ deploy:
   module_name: "bin/functions/addSensorData"
   handler_name: "default"
   on:
-    branch: travis-deploy 
+    branch: dev
 
 - provider: lambda
   function_name: "cognicity-sensors-delete-data-dev"
@@ -60,7 +60,7 @@ deploy:
   module_name: "bin/functions/deleteSensorData"
   handler_name: "default"
   on:
-    branch: travis-deploy 
+    branch: dev 
 
 - provider: lambda
   function_name: "cognicity-sensors-get-sensors-dev"
@@ -70,7 +70,7 @@ deploy:
   module_name: "bin/functions/getSensors"
   handler_name: "default"
   on:
-    branch: travis-deploy 
+    branch: dev
 
 - provider: lambda
   function_name: "cognicity-sensors-get-data-dev"
@@ -80,4 +80,4 @@ deploy:
   module_name: "bin/functions/getSensorData"
   handler_name: "default"
   on:
-    branch: travis-deploy 
+    branch: dev 
