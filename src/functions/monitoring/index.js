@@ -18,13 +18,11 @@ export default async (event, context, callback) => {
         geoformat: 'geojson',
         },
     });
-    console.log(response);
-    if (response.statusCode === 200) {
+    if (response.data.statusCode === 200) {
         console.log('Recieve 200 response from ' + config.ENDPOINT);
         callback(null, JSON.stringify(
-            'Recieve 200 response from ' + config.ENDPOINT));
+            'Received 200 response from ' + config.ENDPOINT));
     } else {
-        console.log(response);
         console.log('Received non 200 response from ' + config.ENDPOINT);
         callback(new Error(
             'Received non 200 response from ' + config.ENDPOINT));
