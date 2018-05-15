@@ -29,7 +29,7 @@ const _propertiesSchema = Joi.object().keys({
 
 /**
  * Endpoint for sensor objects
- * @function sensors
+ * @function getSensors
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)

@@ -26,7 +26,7 @@ const _pathSchema = Joi.object().keys({
 
 /**
  * Endpoint for new sensor objects
- * @function sensors
+ * @function addSensorData
  * @param {Object} event - AWS Lambda event object
  * @param {Object} context - AWS Lambda context object
  * @param {Object} callback - Callback (HTTP response)
