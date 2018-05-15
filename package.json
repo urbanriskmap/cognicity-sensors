@@ -22,10 +22,11 @@
     "unit.js": "^2.0.0"
   },
   "scripts": {
-    "mocha": "nyc mocha --require babel-core/register src/test/index",
+    "unit": "nyc mocha --require babel-core/register src/test/unit",
+    "integration": "nyc mocha --require babel-core/register src/test/integration",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint --fix src",
-    "test": "npm run lint && npm run mocha",
+    "test": "npm run lint && npm run unit",
     "build": "./node_modules/.bin/babel src -d bin"
   },
   "repository": {

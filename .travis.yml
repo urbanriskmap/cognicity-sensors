@@ -21,4 +21,5 @@ install:
   - npm install
 
 script:
+  - npm run integration
   - npm run test && npm run coverage

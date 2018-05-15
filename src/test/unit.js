@@ -6,13 +6,9 @@
 **/
 import testSensors from './testSensors';
 import testSensorData from './testSensorData';
-import testIntegration from './testIntegration';
 
 // Unit tests
 testSensors();
 testSensorData();
-
-// Integration tests
-testIntegration();
 
 
