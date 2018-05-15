@@ -18,15 +18,19 @@ export default async (event, context, callback) => {
         geoformat: 'geojson',
         },
     });
-    if (response.statusCode === 200){
+    if (response.statusCode === 200) {
         console.log('Recieve 200 response from ' + config.ENDPOINT);
-        callback(null, JSON.stringify('Recieve 200 response from ' + config.ENDPOINT));
+        callback(null, JSON.stringify(
+            'Recieve 200 response from ' + config.ENDPOINT));
     } else {
         console.log('Received non 200 response from ' + config.ENDPOINT);
-        callback(new Error('Received non 200 response from ' + config.ENDPOINT));
+        callback(new Error(
+            'Received non 200 response from ' + config.ENDPOINT));
     }
   } catch (err) {
-        console.log('Error requesting ' + config.ENDPOINT + ' - ' + err.message);
-        callback(new Error('Error requesting ' + config.ENDPOINT + ' - ' + err.message));
+        console.log(
+            'Error requesting ' + config.ENDPOINT + ' - ' + err.message);
+        callback(new Error(
+            'Error requesting ' + config.ENDPOINT + ' - ' + err.message));
   }
 };
