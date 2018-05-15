@@ -2,6 +2,10 @@ language: node_js
 
 node_js: '8.10'
 
+branches:
+  only:
+    - travis-deploy
+
 addons:
   postgresql: "10"
   apt:
@@ -23,3 +27,54 @@ install:
 script:
   - npm run integration
   - npm run test && npm run coverage
+
+deploy: 
+- provider: lambda
+  function_name: "cognicity-sensors-add-sensor-dev"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/addSensor"
+  handler_name: "default"
+  on:
+    branch: travis-deploy 
+    
+- provider: lambda
+  function_name: "cognicity-sensors-add-data-dev"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/addSensorData"
+  handler_name: "default"
+  on:
+    branch: travis-deploy 
+
+- provider: lambda
+  function_name: "cognicity-sensors-delete-data-dev"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/deleteSensorData"
+  handler_name: "default"
+  on:
+    branch: travis-deploy 
+
+- provider: lambda
+  function_name: "cognicity-sensors-get-sensors-dev"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/getSensors"
+  handler_name: "default"
+  on:
+    branch: travis-deploy 
+
+- provider: lambda
+  function_name: "cognicity-sensors-get-data-dev"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/getSensorData"
+  handler_name: "default"
+  on:
+    branch: travis-deploy 
