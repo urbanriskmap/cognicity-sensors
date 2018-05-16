@@ -9,6 +9,7 @@
 require('dotenv').config({silent: true});
 
 export default {
+  API_KEY: process.env.API_KEY,
   ENDPOINT: process.env.ENDPOINT || 'https://sensors-dev.riskmap.us/',
   PGHOST: process.env.PGHOST || '127.0.0.1',
   PGDATABASE: process.env.PGDATABASE || 'cognicity',
