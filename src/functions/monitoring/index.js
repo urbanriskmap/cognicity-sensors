@@ -16,7 +16,7 @@ export default async (event, context, callback) => {
         method:'get',
         url:config.ENDPOINT,
         responseType:'json',
-        rejectUnauthorized: true, // Axios issue with AWS certs
+        rejectUnauthorized: false, // Axios issue with AWS certs
         params: {
             bbox: '-81,27,-79,25',
             geoformat: 'geojson',
