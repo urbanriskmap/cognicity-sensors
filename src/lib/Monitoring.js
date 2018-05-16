@@ -74,15 +74,15 @@ export default class Monitoring {
                     console.log('Received correct 404 response from ' +
                     endpoint);
                 resolve('Received correct 404 response from ' +
-                    endpoint)
+                    endpoint);
                 } else {
                     console.log('Received incorrect response from ' +
                         endpoint);
                     reject(new Error(
                         'Received incorrect response from ' + endpoint +
-                        '. Error was: ' + response.errorMessage));
+                        '. Error was: ' + err));
                 }
-            })
+            });
         });
     }
 
@@ -105,8 +105,9 @@ export default class Monitoring {
                         'x-api-key': this.config.API_KEY,
                 },
             }).then((response) => {
-                // Received 200 response, but this should have raised a 400 error
-                reject(new Error('Expecting 400 response, received 200 from ' + config.endpoint))
+                // Received 200 response, but should have raised a 400 error
+                reject(new Error('Expecting 400 response, received 200 from ' +
+                    endpoint));
             }).catch((err) => {
                 // Happy with a 400 for missing location param
                 if (err.response.data.statusCode === 400) {
@@ -119,10 +120,10 @@ export default class Monitoring {
                         endpoint);
                     reject(new Error(
                         'Received incorrect response from ' + endpoint +
-                        '. Error was: ' + response.errorMessage));
+                        '. Error was: ' + err));
                 }
-                reject(err)
-            })
+                reject(err);
+            });
         });
     }
   }
