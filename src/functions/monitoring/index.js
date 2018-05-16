@@ -4,6 +4,29 @@ import axios from 'axios';
 // Local objects
 import config from '../../config';
 
+function getSensors() {
+    return new Promise((resolve, reject) => {
+        axios.get(config.ENDPOINT, { 
+            params:{
+                bbox: '-81,27,-79,25',
+                geoformat: 'geojson',
+            },
+        }).then((response) => {
+            if (response.data.statusCode === 200) {
+                console.log('Recieve 200 response from ' + 
+                    config.ENDPOINT);
+                resolve('Received 200 response from ' + 
+                    config.ENDPOINT);
+            } else {
+                console.log('Received non 200 response from ' + 
+                    config.ENDPOINT);
+                reject(new Error(
+                    'Received non 200 response from ' + config.ENDPOINT));
+            }
+        }).catch((err) => reject(err));
+    });
+}
+
 /**
  * Endpoint for montoring sensor lambda
  * @function monitoring
@@ -12,28 +35,7 @@ import config from '../../config';
  * @param {Object} callback - Callback (HTTP response)
  */
 export default (event, context, callback) => {
-    const p1 = axios.get(config.ENDPOINT, {
-    params: {
-        bbox: '-81,27,-79,25',
-        geoformat: 'geojson',
-        },
-    });
-
-    Promise.all([p1]).then((values) => {
-        const response = values[0];
-        if (response.data.statusCode === 200) {
-            console.log('Recieve 200 response from ' + config.ENDPOINT);
-            callback(null, JSON.stringify(
-                'Received 200 response from ' + config.ENDPOINT));
-        } else {
-            console.log('Received non 200 response from ' + config.ENDPOINT);
-            callback(new Error(
-                'Received non 200 response from ' + config.ENDPOINT));
-        }
-    }).catch((err) => {
-        console.log(
-            'Error requesting ' + config.ENDPOINT + ' - ' + err.message);
-        callback(new Error(
-            'Error requesting ' + config.ENDPOINT + ' - ' + err.message));
-    });
+    getSensors()
+        .then((res) => callback(null, res))
+        .catch((err) => callback(err));
 };
