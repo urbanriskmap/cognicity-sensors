@@ -17,7 +17,6 @@ function getSensors() {
                 geoformat: 'geojson',
             },
         }).then((response) => {
-            console.log(response);
             if (response.data.statusCode === 200) {
                 console.log('Recieve 200 response from ' +
                     config.ENDPOINT);
@@ -27,7 +26,7 @@ function getSensors() {
                 console.log('Received non 200 response from ' +
                     config.ENDPOINT);
                 reject(new Error(
-                    'Received non 200 response from ' + config.ENDPOINT));
+                    'Received non 200 response from ' + config.ENDPOINT + '. Error was: ' + response.errorMessage));
             }
         }).catch((err) => reject(err));
     });
