@@ -56,21 +56,33 @@ export default class Monitoring {
         return new Promise((resolve, reject) => {
             this.axios.get(endpoint, {
             }).then((response) => {
-                // Happy with a 404 if sensor not in database
-                if (response.data.statusCode === 200 ||
-                    response.data.statusCode === 404) {
-                    console.log('Received 200 or 404 response from ' +
+                if (response.data.statusCode === 200) {
+                    console.log('Received 200 response from ' +
                         endpoint);
-                    resolve('Received 200 or 404 response from ' +
+                    resolve('Received 200 response from ' +
                         endpoint);
                 } else {
-                    console.log('Received non 200 or 404 response from ' +
+                    console.log('Received incorrect response from ' +
                         endpoint);
                     reject(new Error(
-                        'Received non 200 or 404 response from ' + endpoint +
+                        'Received incorrect response from ' + endpoint +
                         '. Error was: ' + response.errorMessage));
                 }
-            }).catch((err) => reject(err));
+            }).catch((err) => {
+                // Happy with a 404 if sensor not in database
+                if (err.response.data.statusCode === 404) {
+                    console.log('Received correct 404 response from ' +
+                    endpoint);
+                resolve('Received correct 404 response from ' +
+                    endpoint)
+                } else {
+                    console.log('Received incorrect response from ' +
+                        endpoint);
+                    reject(new Error(
+                        'Received incorrect response from ' + endpoint +
+                        '. Error was: ' + response.errorMessage));
+                }
+            })
         });
     }
 
@@ -93,20 +105,24 @@ export default class Monitoring {
                         'x-api-key': this.config.API_KEY,
                 },
             }).then((response) => {
+                // Received 200 response, but this should have raised a 400 error
+                reject(new Error('Expecting 400 response, received 200 from ' + config.endpoint))
+            }).catch((err) => {
                 // Happy with a 400 for missing location param
-                if (response.data.statusCode === 400) {
+                if (err.response.data.statusCode === 400) {
                     console.log('Received correct 400 response from ' +
                         endpoint);
                     resolve('Received correct 400 response from ' +
                         endpoint);
                 } else {
-                    console.log('Received correct 400 response from ' +
+                    console.log('Received incorrect response from ' +
                         endpoint);
                     reject(new Error(
-                        'Received non-correct 400 response from ' + endpoint +
+                        'Received incorrect response from ' + endpoint +
                         '. Error was: ' + response.errorMessage));
                 }
-            }).catch((err) => reject(err));
+                reject(err)
+            })
         });
     }
   }

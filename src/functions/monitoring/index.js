@@ -14,7 +14,7 @@ export default (event, context, callback) => {
     const mtr = new Monitoring(config);
 
     // Make requests
-    Promise.all(mtr.getSensors(), mtr.getSensorData(), mtr.addSensor())
+    Promise.all([mtr.getSensors(), mtr.getSensorData(), mtr.addSensor()])
         .then((res) => callback(null, res))
         .catch((err) => callback(err));
 };
