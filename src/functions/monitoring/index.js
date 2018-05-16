@@ -13,6 +13,7 @@ import config from '../../config';
 export default async (event, context, callback) => {
   try {
     const response = await axios.get(config.ENDPOINT, {
+    rejectUnauthorized: false,
     params: {
         bbox: '-81,27,-79,25',
         geoformat: 'geojson',
