@@ -179,7 +179,7 @@ export default function() {
             });
         });
 
-        it('getSensorData() - throws bad id value error', function(done) {
+        it('getSensorData() - throws 404 for bad id value error', function(done) {
             getSensorData({pathParameters: JSON.stringify({id: 9223372036854776})}, {}, function(err, response) {
                 const body = JSON.parse(response.body);
                 test.value(err).is(null);
@@ -187,8 +187,7 @@ export default function() {
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Credentials': true,
                 });
-                test.value(body.statusCode).is(200);
-                test.value(body.result).is([]);
+                test.value(body.statusCode).is(404);
                 done();
             });
         });

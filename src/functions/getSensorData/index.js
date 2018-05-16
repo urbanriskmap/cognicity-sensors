@@ -40,8 +40,13 @@ export default async (event, context, callback) => {
 
     // Get data
     const result = await sensorData.get(params.id);
-    console.log('Retrieved sensor data');
-    handleResponse(callback, 200, result.rows);
+    if (result.rowCount < 1) {
+      handleResponse(callback, 404,
+        {message: 'Sensor ' + params.id + ' not found.'});
+    } else {
+      console.log('Retrieved sensor data');
+      handleResponse(callback, 200, result.rows);
+    }
   } catch (err) {
     if (err.isJoi) {
       handleResponse(callback, 400, err.details[0].message);
