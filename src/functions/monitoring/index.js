@@ -17,6 +17,7 @@ function getSensors() {
                 geoformat: 'geojson',
             },
         }).then((response) => {
+            console.log(response);
             if (response.data.statusCode === 200) {
                 console.log('Recieve 200 response from ' +
                     config.ENDPOINT);
