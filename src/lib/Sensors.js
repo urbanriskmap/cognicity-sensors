@@ -64,6 +64,13 @@ export default class Sensors {
      * @return {Promise} - Response from database
      */
     insert(properties, location) {
+      // DBGeo params
+      const params = {
+        outputFormat: this.config.GEO_FORMAT_DEFAULT,
+        geometryColumn: this.config.GEO_COLUMN,
+        geometryType: 'wkb',
+        precision: this.config.GEO_PRECISION,
+      };
       // Query string
       const query = `INSERT INTO ${this.config.TABLE_SENSOR_METADATA}
       (properties, ${this.config.GEO_COLUMN})
@@ -72,7 +79,14 @@ export default class Sensors {
 
       return new Promise((resolve, reject) => {
         this.pool.query(query, [properties, location.lng, location.lat])
-          .then((response) => resolve(response))
+          .then((result) => {
+            this.dbgeo.parse(result.rows, params, (err, parsed) => {
+              if (err) {
+                reject(err);
+              }
+              resolve(parsed);
+            });
+          })
           .catch((err) => reject(err));
       });
     }

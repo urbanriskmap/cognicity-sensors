@@ -45,7 +45,7 @@ export default function() {
                     'Access-Control-Allow-Credentials': true,
                 });
                 test.value(body.statusCode).is(200);
-                test.value(body.result.properties.name).is('test');
+                test.value(body.result.type).is('FeatureCollection');
                 done();
             });
         });

@@ -80,7 +80,7 @@ export default function() {
             parseError = false;
             sensor.insert({}, {})
                 .then((res) => {
-                    test.value(res.rows[0]).is('success');
+                    test.value(res).is('parse succesful');
                     done();
                 });
         });
