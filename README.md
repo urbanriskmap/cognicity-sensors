@@ -3,7 +3,9 @@
 # cognicity-sensors
 Scaleable sensors infrastructure for CogniCity.
 
-This repository contains code for AWS Lambda deployment to act as /sensors API endpoint
+This repository contains code for AWS Lambda deployment to act as /sensors API endpoint.
+
+Older sensors code is archived on the [petabencana](https://github.com/urbanriskmap/cognicity-sensors/tree/petabencana) branch.
 
 ### Design
 The CogniCity sensors project is designed to allow for easy consumption of external sensor data from APIs to be stored in a CogniCity schema instance, and serve the data through a standardised interface. For scaleability the schema component shall primairly store sensor objects in JSON/JSONB form (see below), therefore sensors does not impose strict schema on sensor data. Multiple sensor data structures for different sensors may be stored within the sensors table. Validity of sensor data is therefore the role of the sensor owner within the team, who will also be responsible for writing the required extract, transform and load (ETL) scripts to place data in the database.
