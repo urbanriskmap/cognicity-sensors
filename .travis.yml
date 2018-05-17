@@ -5,6 +5,7 @@ node_js: '8.10'
 branches:
   only:
     - dev
+    - master
 
 #addons:
 #  postgresql: "10"
@@ -91,3 +92,63 @@ deploy:
   handler_name: "default"
   on:
     branch: dev
+
+- provider: lambda
+  function_name: "cognicity-sensors-add-sensor-prod"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/addSensor"
+  handler_name: "default"
+  on:
+    branch: master
+
+- provider: lambda
+  function_name: "cognicity-sensors-add-data-prod"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/addSensorData"
+  handler_name: "default"
+  on:
+    branch: master
+
+- provider: lambda
+  function_name: "cognicity-sensors-delete-data-prod"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/deleteSensorData"
+  handler_name: "default"
+  on:
+    branch: master 
+
+- provider: lambda
+  function_name: "cognicity-sensors-get-sensors-prod"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/getSensors"
+  handler_name: "default"
+  on:
+    branch: master
+
+- provider: lambda
+  function_name: "cognicity-sensors-get-data-prod"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/getSensorData"
+  handler_name: "default"
+  on:
+    branch: master 
+
+- provider: lambda
+  function_name: "cognicity-sensors-monitoring-prod"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/monitoring"
+  handler_name: "default"
+  on:
+    branch: master
