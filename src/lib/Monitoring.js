@@ -110,6 +110,7 @@ export default class Monitoring {
                     endpoint));
             }).catch((err) => {
                 // Happy with a 400 for missing location param
+                console.log(err);
                 if (err.response.data.statusCode === 400) {
                     console.log('Received correct 400 response from ' +
                         endpoint);
