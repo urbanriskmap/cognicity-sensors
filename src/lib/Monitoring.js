@@ -87,7 +87,7 @@ export default class Monitoring {
     }
 
     /**
-     * Verify get sensors endpoint working
+     * Verify add sensors endpoint working
      * @function addSensor
      * @return {Promise} - Result of request and validation
      */
@@ -100,6 +100,87 @@ export default class Monitoring {
                         name: 'test sensor',
                     },
                 },
+                {
+                    headers: {
+                        'x-api-key': this.config.API_KEY,
+                },
+            }).then((response) => {
+                // Received 200 response, but should have raised a 400 error
+                reject(new Error('Expecting 400 response, received 200 from ' +
+                    endpoint));
+            }).catch((err) => {
+                // Happy with a 400 for missing location param
+                console.log(err.response.data.statusCode);
+
+                if (err.response.data.statusCode === 400) {
+                    console.log('Received correct 400 response from ' +
+                        endpoint);
+                    resolve('Received correct 400 response from ' +
+                        endpoint);
+                } else {
+                    console.log('Received incorrect response from ' +
+                        endpoint);
+                    reject(new Error(
+                        'Received incorrect response from ' + endpoint +
+                        '. Error was: ' + err));
+                }
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * Verify add sensor data endpoint working
+     * @function addSensorData
+     * @return {Promise} - Result of request and validation
+     */
+    addSensorData() {
+        const endpoint = this.config.ENDPOINT + '/1';
+        return new Promise((resolve, reject) => {
+            this.axios.post(endpoint,
+                {
+                    properties: {
+                        name: 'test sensor',
+                    },
+                },
+                {
+                    headers: {
+                        'x-api-key': this.config.API_KEY,
+                },
+            }).then((response) => {
+                // Received 200 response, but should have raised a 400 error
+                reject(new Error('Expecting 400 response, received 200 from ' +
+                    endpoint));
+            }).catch((err) => {
+                // Happy with a 400 for missing location param
+                console.log(err.response.data.statusCode);
+
+                if (err.response.data.statusCode === 400) {
+                    console.log('Received correct 400 response from ' +
+                        endpoint);
+                    resolve('Received correct 400 response from ' +
+                        endpoint);
+                } else {
+                    console.log('Received incorrect response from ' +
+                        endpoint);
+                    reject(new Error(
+                        'Received incorrect response from ' + endpoint +
+                        '. Error was: ' + err));
+                }
+                reject(err);
+            });
+        });
+    }
+
+    /**
+     * Verify delete sensor data endpoint working
+     * @function deleteSensorData
+     * @return {Promise} - Result of request and validation
+     */
+    deleteSensorData() {
+        const endpoint = this.config.ENDPOINT + '/1/spam';
+        return new Promise((resolve, reject) => {
+            this.axios.delete(endpoint,
                 {
                     headers: {
                         'x-api-key': this.config.API_KEY,
