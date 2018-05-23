@@ -46,7 +46,7 @@ export default async (event, context, callback) => {
   const sensorData = new SensorData(config, pool);
 
   // Add sensor data
-  const result = await sensorData.insert(path.id, properties);
+  const result = await sensorData.insert(path.id, properties.properties);
   console.log('Added sensor data');
   handleResponse(callback, 200, result.rows[0]);
   } catch (err) {
