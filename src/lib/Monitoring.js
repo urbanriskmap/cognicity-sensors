@@ -8,7 +8,7 @@ import axios from 'axios';
  **/
 export default class Monitoring {
     /**
-     * constructor for class SensorData
+     * constructor for class Monitoring
      * @param {Object} config - Lambda configuration object
      */
     constructor(config) {
