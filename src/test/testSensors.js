@@ -48,7 +48,7 @@ export default function() {
         it('Can handle query errors in all()', function(done) {
             queryError = true;
             parseError = false;
-            sensor.all({})
+            sensor.all({bbox: [], geoformat: '', agency: ''})
                 .catch((err) => {
                     test.value(err.message).is('query error');
                     done();
@@ -58,7 +58,7 @@ export default function() {
         it('Can handle dbgeo errors in all()', function(done) {
             queryError = false;
             parseError = true;
-            sensor.all({})
+            sensor.all({bbox: [], geoformat: '', agency: ''})
                 .catch((err) => {
                     test.value(err.message).is('parse error');
                     done();

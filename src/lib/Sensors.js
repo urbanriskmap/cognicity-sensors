@@ -25,6 +25,7 @@ export default class Sensors {
      * @param {Object} properties - Query parameters
      * @param {Object} properties.bbox - Bounding box (xmin, ymin, xmax, ymax)
      * @param {Object} properties.geoformat - Output geoformat
+     * @param {Object} properties.agency - Agency that owns the sensor
      * @return {Promise} - Response from database
      */
     all(properties) {
@@ -38,10 +39,14 @@ export default class Sensors {
       // Query string
       const query = `SELECT * FROM ${this.config.TABLE_SENSOR_METADATA}
       WHERE ( ${this.config.GEO_COLUMN} @ ST_MakeEnvelope($1, $2, $3,
-        $4, ${this.config.GEO_SRID}))`;
+        $4, ${this.config.GEO_SRID})) AND 
+        ($5 IS NULL OR properties->>'agency' = $5)`;
+
+      // Query arguments
+      const queryArguments = properties.bbox.concat([properties.agency]);
 
       return new Promise((resolve, reject) => {
-        this.pool.query(query, properties.bbox)
+        this.pool.query(query, queryArguments)
           .then((result) => {
             this.dbgeo.parse(result.rows, params, (err, parsed) => {
               if (err) {

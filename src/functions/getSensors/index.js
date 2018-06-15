@@ -25,6 +25,7 @@ const _propertiesSchema = Joi.object().keys({
   ).default(config.GEO_EXTENTS_DEFAULT),
   geoformat: Joi.string().default(config.GEO_FORMAT_DEFAULT)
     .valid(config.GEO_FORMATS),
+  agency: Joi.string(),
 });
 
 /**
@@ -52,6 +53,8 @@ export default async (event, context, callback) => {
         !!event.queryStringParameters.geoformat &&
         event.queryStringParameters.geoformat ||
         config.GEO_FORMAT_DEFAULT,
+      agency: !!event.queryStringParameters.agency &&
+      event.queryStringParameters.agency || null,
     };
 
     // Validate
