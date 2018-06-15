@@ -97,4 +97,31 @@ export default class Sensors {
           .catch((err) => reject(err));
       });
     }
+
+    /**
+     * Delete a sensor from the database
+     * @method delete
+     * @param {Number} id - Sensor identifier
+     * @return {Promise} - Response from database
+     */
+    delete(id) {
+      // Delete data attached to sensor
+      const queryData = `DELETE FROM ${this.config.TABLE_SENSOR_DATA}
+      WHERE sensor_id = $1`;
+
+      // Delete sensor metadata
+      const querySensor = `DELETE FROM ${this.config.TABLE_SENSOR_METADATA}
+      WHERE id = $1`;
+
+      return new Promise(async (resolve, reject) => {
+        try {
+            await this.pool.query(queryData, [id]);
+            const result = await this.pool.query(querySensor, [id]);
+            resolve(result);
+        } catch (err) {
+            console.log('Error deleting sensor. ' + err.message);
+            reject(err);
+        }
+      });
+    }
   }

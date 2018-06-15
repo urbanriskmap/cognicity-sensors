@@ -65,10 +65,30 @@ export default function() {
                 });
         });
 
+        it('Can handle dbgeo errors in insert()', function(done) {
+            queryError = false;
+            parseError = true;
+            sensor.insert({}, {})
+                .catch((err) => {
+                    test.value(err.message).is('parse error');
+                    done();
+                });
+        });
+
         it('Can handle query errors in insert()', function(done) {
             queryError = true;
             parseError = false;
             sensor.insert({}, {})
+                .catch((err) => {
+                    test.value(err.message).is('query error');
+                    done();
+                });
+        });
+
+        it('Cab handle query errors delete()', function(done) {
+            queryError = true;
+            parseError = false;
+            sensor.delete({}, {})
                 .catch((err) => {
                     test.value(err.message).is('query error');
                     done();
@@ -81,6 +101,16 @@ export default function() {
             sensor.insert({}, {})
                 .then((res) => {
                     test.value(res).is('parse succesful');
+                    done();
+                });
+        });
+
+        it('Sucesfully resolves delete()', function(done) {
+            queryError = false;
+            parseError = false;
+            sensor.delete({}, {})
+                .then((res) => {
+                    test.value(res.rows[0]).is('success');
                     done();
                 });
         });
