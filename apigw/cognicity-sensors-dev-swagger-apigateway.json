@@ -1,11 +1,10 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2018-05-15T17:24:37Z",
+    "version": "2018-06-15T19:24:45Z",
     "title": "cognicity-sensors"
   },
-  "host": "k6t1rxqatg.execute-api.us-west-2.amazonaws.com",
-  "basePath": "/dev",
+  "host": "sensors-dev.riskmap.us",
   "schemes": [
     "https"
   ],
@@ -61,6 +60,11 @@
             }
           }
         },
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-integration": {
           "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:917524458155:function:cognicity-sensors-add-sensor-${stageVariables.env}/invocations",
           "responses": {
@@ -114,10 +118,10 @@
               }
             }
           },
-          "passthroughBehavior": "when_no_match",
           "requestTemplates": {
             "application/json": "{\"statusCode\": 200}"
           },
+          "passthroughBehavior": "when_no_match",
           "type": "mock"
         }
       }
@@ -176,8 +180,51 @@
             }
           }
         },
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-integration": {
           "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:917524458155:function:cognicity-sensors-add-data-${stageVariables.env}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            }
+          },
+          "passthroughBehavior": "when_no_match",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT",
+          "type": "aws_proxy"
+        }
+      },
+      "delete": {
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:917524458155:function:cognicity-sensors-delete-sensor-${stageVariables.env}/invocations",
           "responses": {
             "default": {
               "statusCode": "200"
@@ -226,10 +273,10 @@
               }
             }
           },
-          "passthroughBehavior": "when_no_match",
           "requestTemplates": {
             "application/json": "{\"statusCode\": 200}"
           },
+          "passthroughBehavior": "when_no_match",
           "type": "mock"
         }
       }
@@ -261,6 +308,11 @@
             }
           }
         },
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
         "x-amazon-apigateway-integration": {
           "uri": "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:917524458155:function:cognicity-sensors-delete-data-${stageVariables.env}/invocations",
           "responses": {
@@ -315,13 +367,20 @@
               }
             }
           },
-          "passthroughBehavior": "when_no_match",
           "requestTemplates": {
             "application/json": "{\"statusCode\": 200}"
           },
+          "passthroughBehavior": "when_no_match",
           "type": "mock"
         }
       }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "x-api-key",
+      "in": "header"
     }
   },
   "definitions": {
