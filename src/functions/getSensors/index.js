@@ -54,8 +54,10 @@ export default async (event, context, callback) => {
         event.queryStringParameters.geoformat ||
         config.GEO_FORMAT_DEFAULT,
       agency: !!event.queryStringParameters.agency &&
-      event.queryStringParameters.agency || null,
+      event.queryStringParameters.agency || 'null',
     };
+
+    console.log(defaults);
 
     // Validate
     const properties = await Joi.validate(defaults, _propertiesSchema);

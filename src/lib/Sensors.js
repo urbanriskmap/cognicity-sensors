@@ -45,6 +45,8 @@ export default class Sensors {
       // Query arguments
       const queryArguments = properties.bbox.concat([properties.agency]);
 
+      console.log('queryArguments', queryArguments);
+
       return new Promise((resolve, reject) => {
         this.pool.query(query, queryArguments)
           .then((result) => {
