@@ -40,7 +40,7 @@ export default class Sensors {
       const query = `SELECT * FROM ${this.config.TABLE_SENSOR_METADATA}
       WHERE ( ${this.config.GEO_COLUMN} @ ST_MakeEnvelope($1, $2, $3,
         $4, ${this.config.GEO_SRID})) AND 
-        ($5 IS NULL OR properties->>'agency' = $5)`;
+        ($5 IS NULL OR properties->>'agency' = $5::varchar)`;
 
       // Query arguments
       const queryArguments = properties.bbox.concat([properties.agency]);
