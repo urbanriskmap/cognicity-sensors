@@ -25,7 +25,7 @@ const _propertiesSchema = Joi.object().keys({
   ).default(config.GEO_EXTENTS_DEFAULT),
   geoformat: Joi.string().default(config.GEO_FORMAT_DEFAULT)
     .valid(config.GEO_FORMATS),
-  agency: Joi.string(),
+  agency: Joi.alternatives().try(Joi.string(), Joi.any().valid(null)),
 });
 
 /**
