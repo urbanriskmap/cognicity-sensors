@@ -53,8 +53,9 @@ export default async (event, context, callback) => {
         !!event.queryStringParameters.geoformat &&
         event.queryStringParameters.geoformat ||
         config.GEO_FORMAT_DEFAULT,
-      agency: !!event.queryStringParameters.agency &&
-      event.queryStringParameters.agency || null,
+      agency: !!event.queryStringParameters &&
+        !!event.queryStringParameters.agency &&
+        event.queryStringParameters.agency || null,
     };
 
     console.log(defaults);
