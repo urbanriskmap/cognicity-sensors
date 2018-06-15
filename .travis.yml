@@ -43,6 +43,17 @@ deploy:
   on:
     branch: dev
 
+deploy: 
+- provider: lambda
+  function_name: "cognicity-sensors-delete-sensor-dev"
+  region: $AWS_REGION
+  role: $AWS_LAMBDA_ROLE
+  runtime: "nodejs8.10"
+  module_name: "bin/functions/deleteSensor"
+  handler_name: "default"
+  on:
+    branch: dev
+
 - provider: lambda
   function_name: "cognicity-sensors-add-data-dev"
   region: $AWS_REGION
