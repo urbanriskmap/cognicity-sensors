@@ -21,7 +21,8 @@ export default class SensorData {
    * @method get
    * @param {Object} properties - Query properties
    * @param {Number} properties.id - Sensor identifier
-   * @param {String} properties.type - Optional measurement type
+   * @param {String} properties.type - Measurement type or null
+   * @param {String} properties.limit - Limit rows returned or null
    * @return {Promise} - Response from database
    */
   get(properties) {
@@ -31,10 +32,10 @@ export default class SensorData {
     FROM ${this.config.TABLE_SENSOR_DATA}
     WHERE sensor_id = $1 AND
       ($2::varchar IS NULL or properties->>'type' = $2::varchar)
-    ORDER BY created ASC LIMIT 1;`;
+    ORDER BY created DESC LIMIT $3;`;
 
     return new Promise((resolve, reject) => {
-      this.pool.query(query, [properties.id, properties.type])
+      this.pool.query(query, [properties.id, properties.type, properties.limit])
         .then((response) => resolve(response))
         .catch((err) => reject(err));
     });

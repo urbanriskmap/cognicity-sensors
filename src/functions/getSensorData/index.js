@@ -19,6 +19,7 @@ const pool = new Pool({
 const _propertiesSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
   type: Joi.alternatives().try(Joi.string(), Joi.any().valid(null)),
+  limit: Joi.alternatives().try(Joi.number().min(1), Joi.any().valid(null)),
 });
 
 /**
@@ -40,9 +41,14 @@ export default async (event, context, callback) => {
     !!event.queryStringParameters.type &&
     event.queryStringParameters.type || null;
 
+    const limit = !!event.queryStringParameters &&
+    !!event.queryStringParameters.limit &&
+    event.queryStringParameters.limit || null;
+
     const properties = {
       id: event.pathParameters.id,
       type: type,
+      limit: limit,
     };
 
     const props = await Joi.validate(properties, _propertiesSchema);
