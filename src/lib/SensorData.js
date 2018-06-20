@@ -30,7 +30,7 @@ export default class SensorData {
     created, properties 
     FROM ${this.config.TABLE_SENSOR_DATA}
     WHERE sensor_id = $1 AND
-      ($2::varchar IS NULL or properties->>'type' = $5::varchar)
+      ($2::varchar IS NULL or properties->>'type' = $2::varchar)
     ORDER BY created ASC LIMIT 1;`;
 
     return new Promise((resolve, reject) => {
