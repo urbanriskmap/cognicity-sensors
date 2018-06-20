@@ -47,6 +47,8 @@ export default async (event, context, callback) => {
 
     const props = await Joi.validate(properties, _propertiesSchema);
 
+    console.log(props);
+
     // Sensor class
     const sensorData = new SensorData(config, pool);
 
