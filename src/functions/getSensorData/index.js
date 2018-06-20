@@ -41,13 +41,11 @@ export default async (event, context, callback) => {
     event.queryStringParameters.type || null;
 
     const properties = {
-      id: event.pathParameters,
+      id: event.pathParameters.id,
       type: type,
     };
 
     const props = await Joi.validate(properties, _propertiesSchema);
-
-    console.log(props);
 
     // Sensor class
     const sensorData = new SensorData(config, pool);
