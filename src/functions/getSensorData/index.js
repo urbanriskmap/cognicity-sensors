@@ -16,8 +16,9 @@ const pool = new Pool({
   });
 
 // Validation schema
-const _pathSchema = Joi.object().keys({
+const _propertiesSchema = Joi.object().keys({
   id: Joi.number().min(1).required(),
+  type: Joi.alternatives().try(Joi.string(), Joi.any().valid(null)),
 });
 
 /**
@@ -33,16 +34,27 @@ export default async (event, context, callback) => {
     pool.on('error', (err, client) => {
       console.error('Unexpected error on idle client', err);
     });
-    // Params
-    const params = await Joi.validate(event.pathParameters, _pathSchema);
+
+    // Properties
+    const type = !!event.queryStringParameters &&
+    !!event.queryStringParameters.type &&
+    event.queryStringParameters.type || null;
+
+    const properties = {
+      id: event.pathParameters,
+      type: type,
+    };
+
+    const props = await Joi.validate(properties, _propertiesSchema);
+
     // Sensor class
     const sensorData = new SensorData(config, pool);
 
     // Get data
-    const result = await sensorData.get(params.id);
+    const result = await sensorData.get(props);
     if (result.rowCount < 1) {
       handleResponse(callback, 404,
-        {message: 'Sensor ' + params.id + ' not found.'});
+        {message: 'Sensor ' + props.id + ' not found.'});
     } else {
       console.log('Retrieved sensor data');
       handleResponse(callback, 200, result.rows);

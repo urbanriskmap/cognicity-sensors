@@ -19,18 +19,22 @@ export default class SensorData {
   /**
    * Gets sensor data from database
    * @method get
-   * @param {Number} id - Sensor identifier
+   * @param {Object} properties - Query properties
+   * @param {Number} properties.id - Sensor identifier
+   * @param {String} properties.type - Optional measurement type
    * @return {Promise} - Response from database
    */
-  get(id) {
+  get(properties) {
     // Query string
     const query = `SELECT id as "dataId", sensor_id as "sensorId", 
     created, properties 
     FROM ${this.config.TABLE_SENSOR_DATA}
-    WHERE sensor_id = $1 ORDER BY created ASC LIMIT 1;`;
+    WHERE sensor_id = $1 AND
+      ($2::varchar IS NULL or properties->>'type' = $5::varchar)
+    ORDER BY created ASC LIMIT 1;`;
 
     return new Promise((resolve, reject) => {
-      this.pool.query(query, [id])
+      this.pool.query(query, [properties.id, properties.type])
         .then((response) => resolve(response))
         .catch((err) => reject(err));
     });
