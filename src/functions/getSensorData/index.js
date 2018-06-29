@@ -60,7 +60,7 @@ export default async (event, context, callback) => {
     const result = await sensorData.get(props);
     if (result.rowCount < 1) {
       handleResponse(callback, 404,
-        {message: 'Sensor ' + props.id + ' not found.'});
+        {message: 'No data found for sensor ' + props.id + '.'});
     } else {
       console.log('Retrieved sensor data');
       handleResponse(callback, 200, result.rows);
